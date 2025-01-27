@@ -5,26 +5,28 @@ import (
 	"os"
 )
 
+type Registers struct {
+	A  byte
+	F  byte
+	B  byte
+	C  byte
+	D  byte
+	E  byte
+	H  byte
+	L  byte
+	PC uint16
+	SP uint16
+}
+
 type SM83 struct {
 	Cycles int
 
-	Pc                 uint16
 	CurrentOpcode      byte
 	CurrentInstruction Instruction
 
 	Data uint16
 
-	Registers struct {
-		a  byte
-		f  byte
-		b  byte
-		c  byte
-		d  byte
-		e  byte
-		h  byte
-		l  byte
-		sp uint16
-	}
+	Registers Registers
 
 	Memory interface {
 		Read8(address uint16) byte
@@ -45,7 +47,7 @@ func (sm83 *SM83) WriteFlags() {
 }
 
 func (sm83 *SM83) FetchInstruction() {
-	currentOpcode := sm83.Memory.Read8(sm83.Pc)
+	currentOpcode := sm83.Memory.Read8(sm83.Registers.PC)
 	currentInstruction, exists := InstructionMap[currentOpcode]
 
 	if !exists {
@@ -67,7 +69,7 @@ func (sm83 *SM83) FetchData() {
 func (sm83 *SM83) Execute() {
 	switch sm83.CurrentInstruction.IK {
 	case IK_NOP:
-		sm83.Pc++
+		sm83.Registers.PC++
 		sm83.Cycles += 4
 		return
 	}
