@@ -34,8 +34,16 @@ type SM83 struct {
 	}
 }
 
-func (sm83 *SM83) ReadRegister() {
-	// TODO
+func (sm83 *SM83) Print(message string, a ...any) {
+	fmt.Printf("[PC 0x%04X] ", sm83.Registers.PC)
+	fmt.Printf(message, a...)
+	fmt.Printf("\n")
+}
+
+func (sm83 *SM83) PrintAndDie(message string, a ...any) {
+	sm83.Print(message, a...)
+	os.Exit(1)
+}
 }
 
 func (sm83 *SM83) WriteRegister() {
