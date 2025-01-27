@@ -46,7 +46,7 @@ func (sm83 *SM83) WriteFlags() {
 
 func (sm83 *SM83) FetchInstruction() {
 	currentOpcode := sm83.Memory.Read8(sm83.Pc)
-	currentInstruction, exists := InstructionSet[currentOpcode]
+	currentInstruction, exists := InstructionMap[currentOpcode]
 
 	if !exists {
 		fmt.Printf("unknown instruction (0x%02X) encountered at PC: 0x%04X\n", currentOpcode, sm83.Pc)
