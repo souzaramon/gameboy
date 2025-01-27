@@ -1,3 +1,3 @@
-module github.com/souzaramon/go-cpu
+module github.com/souzaramon/SM83
 
 go 1.22.5
