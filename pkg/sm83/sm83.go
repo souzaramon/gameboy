@@ -112,6 +112,8 @@ func (sm83 *SM83) FetchData() {
 	switch sm83.CurrentInstruction.AM {
 	case AM_IMP:
 		return
+	default:
+		sm83.PrintAndDie("unknown addressing mode (%s)", sm83.CurrentInstruction.AM)
 	}
 }
 
@@ -121,6 +123,8 @@ func (sm83 *SM83) Execute() {
 		sm83.Registers.PC++
 		sm83.Cycles += 4
 		return
+	default:
+		sm83.PrintAndDie("instruction kind (%s) not implemented", sm83.CurrentInstruction.IK)
 	}
 }
 
