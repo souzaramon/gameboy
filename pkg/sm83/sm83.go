@@ -89,6 +89,26 @@ func (sm83 *SM83) WriteFlags() {
 	// TODO: z, n, h, c
 }
 
+func (sm83 *SM83) CheckCondition() bool {
+	flag_z := GetNthBit(sm83.Registers.F, 7)
+	flag_c := GetNthBit(sm83.Registers.F, 4)
+
+	switch sm83.CurrentInstruction.CK {
+	case CK_NONE:
+		return true
+	case CK_C:
+		return flag_c
+	case CK_NC:
+		return !flag_c
+	case CK_Z:
+		return flag_z
+	case CK_NZ:
+		return !flag_z
+	default:
+		return false
+	}
+}
+
 func (sm83 *SM83) FetchInstruction() {
 	currentOpcode := sm83.Memory.Read8(sm83.Registers.PC)
 	currentInstruction, exists := InstructionMap[currentOpcode]
