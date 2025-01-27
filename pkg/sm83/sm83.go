@@ -85,8 +85,16 @@ func (sm83 *SM83) WriteRegister() {
 	// TODO
 }
 
-func (sm83 *SM83) WriteFlags() {
-	// TODO: z, n, h, c
+// bits: {z, n, h, c}
+func (sm83 *SM83) WriteFlags(bits [4]int) {
+	for i := 3; i >= 0; i-- {
+		bit := bits[i]
+
+		if bit != -1 {
+			sm83.Registers.F = SetNthBit(sm83.Registers.F, 7-i, bit > 0)
+		}
+
+	}
 }
 
 func (sm83 *SM83) CheckCondition() bool {
