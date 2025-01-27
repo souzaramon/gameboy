@@ -44,6 +44,41 @@ func (sm83 *SM83) PrintAndDie(message string, a ...any) {
 	sm83.Print(message, a...)
 	os.Exit(1)
 }
+
+func (sm83 *SM83) ReadRegister(name string) uint16 {
+	switch name {
+	case "A":
+		return uint16(sm83.Registers.A)
+	case "F":
+		return uint16(sm83.Registers.F)
+	case "B":
+		return uint16(sm83.Registers.B)
+	case "C":
+		return uint16(sm83.Registers.C)
+	case "D":
+		return uint16(sm83.Registers.D)
+	case "E":
+		return uint16(sm83.Registers.E)
+	case "H":
+		return uint16(sm83.Registers.H)
+	case "L":
+		return uint16(sm83.Registers.L)
+	case "SP":
+		return sm83.Registers.SP
+	case "PC":
+		return sm83.Registers.PC
+	case "AF":
+		return (uint16(sm83.Registers.F) << 8) | uint16(sm83.Registers.A)
+	case "BC":
+		return (uint16(sm83.Registers.C) << 8) | uint16(sm83.Registers.B)
+	case "DE":
+		return (uint16(sm83.Registers.E) << 8) | uint16(sm83.Registers.D)
+	case "HL":
+		return (uint16(sm83.Registers.L) << 8) | uint16(sm83.Registers.H)
+	default:
+		sm83.PrintAndDie("Unknown register (%s)", name)
+		return 0
+	}
 }
 
 func (sm83 *SM83) WriteRegister() {
