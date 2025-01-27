@@ -59,8 +59,14 @@ func (sm83 *SM83) FetchInstruction() {
 	currentInstruction, exists := InstructionMap[currentOpcode]
 
 	if !exists {
-		fmt.Printf("unknown instruction (0x%02X) encountered at PC: 0x%04X\n", currentOpcode, sm83.Pc)
-		os.Exit(1)
+		sm83.PrintAndDie("unknown instruction (0x%02X)", currentOpcode)
+	} else {
+		sm83.Print(
+			"opcode (0x%02X), kind (%s), am (%s)",
+			currentOpcode,
+			currentInstruction.IK,
+			currentInstruction.AM,
+		)
 	}
 
 	sm83.CurrentOpcode = currentOpcode
