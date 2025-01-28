@@ -24,13 +24,16 @@ type SM83 struct {
 	CurrentOpcode      byte
 	CurrentInstruction Instruction
 
-	Data uint16
+	Data        uint16
+	DataAddress uint16
 
 	Registers Registers
 
 	Memory interface {
 		Read8(address uint16) byte
 		Write8(address uint16, value byte)
+		Read16(address uint16) uint16
+		Write16(address uint16, value uint16)
 	}
 }
 
@@ -168,7 +171,6 @@ func (sm83 *SM83) Execute() {
 			return
 		}
 		sm83.Registers.PC++
-
 		return
 	default:
 		sm83.PrintAndDie("instruction kind (%s) not implemented", sm83.CurrentInstruction.IK)
