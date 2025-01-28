@@ -1,4 +1,4 @@
-package sm83_test
+package sm83test
 
 type DummyMemory struct {
 	Data []uint8
