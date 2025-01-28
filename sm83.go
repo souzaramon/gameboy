@@ -15,7 +15,7 @@ type CPU struct {
 	DestData     uint16
 	DestIsMemory bool
 
-	Registers CPURegisters
+	Registers Registers
 
 	Memory interface {
 		Read8(address uint16) byte
@@ -25,7 +25,7 @@ type CPU struct {
 	}
 }
 
-type CPURegisters struct {
+type Registers struct {
 	A  byte
 	F  byte
 	B  byte

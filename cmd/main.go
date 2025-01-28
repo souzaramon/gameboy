@@ -23,7 +23,7 @@ func main() {
 	memory := DummyMemory{Data: rom_data}
 
 	cpu := sm83.CPU{
-		Registers: sm83.CPURegisters{
+		Registers: sm83.Registers{
 			A:  0x00,
 			F:  0x00,
 			B:  0x00,

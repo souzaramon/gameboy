@@ -45,7 +45,7 @@ func TestSetFlags(t *testing.T) {
 
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
-			sut := CPU{Registers: CPURegisters{F: c.initial}}
+			sut := CPU{Registers: Registers{F: c.initial}}
 			sut.WriteFlags([4]int{c.z, c.n, c.h, c.c})
 
 			if sut.Registers.F != c.expected {
