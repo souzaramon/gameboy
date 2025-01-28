@@ -48,44 +48,94 @@ func (sm83 *SM83) PrintAndDie(message string, a ...any) {
 	os.Exit(1)
 }
 
-func (sm83 *SM83) ReadRegister(name string) uint16 {
-	switch name {
-	case "A":
+func (sm83 *SM83) ReadRegister(rk RegisterKind) uint16 {
+	switch rk {
+	case RK_A:
 		return uint16(sm83.Registers.A)
-	case "F":
+	case RK_F:
 		return uint16(sm83.Registers.F)
-	case "B":
+	case RK_B:
 		return uint16(sm83.Registers.B)
-	case "C":
+	case RK_C:
 		return uint16(sm83.Registers.C)
-	case "D":
+	case RK_D:
 		return uint16(sm83.Registers.D)
-	case "E":
+	case RK_E:
 		return uint16(sm83.Registers.E)
-	case "H":
+	case RK_H:
 		return uint16(sm83.Registers.H)
-	case "L":
+	case RK_L:
 		return uint16(sm83.Registers.L)
-	case "SP":
+	case RK_SP:
 		return sm83.Registers.SP
-	case "PC":
+	case RK_PC:
 		return sm83.Registers.PC
-	case "AF":
-		return (uint16(sm83.Registers.F) << 8) | uint16(sm83.Registers.A)
-	case "BC":
-		return (uint16(sm83.Registers.C) << 8) | uint16(sm83.Registers.B)
-	case "DE":
-		return (uint16(sm83.Registers.E) << 8) | uint16(sm83.Registers.D)
-	case "HL":
-		return (uint16(sm83.Registers.L) << 8) | uint16(sm83.Registers.H)
+	case RK_AF:
+		return (uint16(sm83.Registers.A) << 8) | uint16(sm83.Registers.F)
+	case RK_BC:
+		return (uint16(sm83.Registers.B) << 8) | uint16(sm83.Registers.C)
+	case RK_DE:
+		return (uint16(sm83.Registers.D) << 8) | uint16(sm83.Registers.E)
+	case RK_HL:
+		return (uint16(sm83.Registers.H) << 8) | uint16(sm83.Registers.L)
 	default:
-		sm83.PrintAndDie("Unknown register (%s)", name)
+		sm83.PrintAndDie("Unknown register (%s)", rk)
 		return 0
 	}
 }
 
-func (sm83 *SM83) WriteRegister() {
-	// TODO
+func (sm83 *SM83) SetRegister(rk RegisterKind, value uint16) {
+	switch rk {
+	case RK_A:
+		sm83.Registers.A = uint8(value & 0xFF)
+		return
+	case RK_F:
+		sm83.Registers.F = uint8(value & 0xFF)
+		return
+	case RK_B:
+		sm83.Registers.B = uint8(value & 0xFF)
+		return
+	case RK_C:
+		sm83.Registers.C = uint8(value & 0xFF)
+		return
+	case RK_D:
+		sm83.Registers.D = uint8(value & 0xFF)
+		return
+	case RK_E:
+		sm83.Registers.E = uint8(value & 0xFF)
+		return
+	case RK_H:
+		sm83.Registers.H = uint8(value & 0xFF)
+		return
+	case RK_L:
+		sm83.Registers.L = uint8(value & 0xFF)
+		return
+	case RK_SP:
+		sm83.Registers.SP = value
+		return
+	case RK_PC:
+		sm83.Registers.PC = value
+		return
+	case RK_AF:
+		sm83.Registers.A = uint8(value)
+		sm83.Registers.F = uint8(value >> 8)
+		return
+	case RK_BC:
+		sm83.Registers.B = uint8(value)
+		sm83.Registers.C = uint8(value >> 8)
+		return
+	case RK_DE:
+		sm83.Registers.D = uint8(value)
+		sm83.Registers.E = uint8(value >> 8)
+		return
+	case RK_HL:
+		sm83.Registers.H = uint8(value)
+		sm83.Registers.L = uint8(value >> 8)
+		return
+	default:
+		sm83.PrintAndDie("Unknown register (%s)", rk)
+		return
+	}
 }
 
 // bits: {z, n, h, c}
