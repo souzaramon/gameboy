@@ -24,8 +24,9 @@ type SM83 struct {
 	CurrentOpcode      byte
 	CurrentInstruction Instruction
 
-	Data        uint16
-	DataAddress uint16
+	Data         uint16
+	DestData     uint16
+	DestIsMemory bool
 
 	Registers Registers
 
@@ -193,16 +194,76 @@ func (sm83 *SM83) FetchData() {
 	switch sm83.CurrentInstruction.AM {
 	case AM_IMP:
 		return
-	case AM_A16:
-		lo := uint16(sm83.Memory.Read8(sm83.Registers.PC + 1))
-		hi := uint16(sm83.Memory.Read8(sm83.Registers.PC + 2))
+	case AM_R:
+		sm83.Data = sm83.ReadRegister(sm83.CurrentInstruction.R1)
+		return
+	case AM_R_R:
+		sm83.Data = sm83.ReadRegister(sm83.CurrentInstruction.R2)
+		return
+	case AM_R_D8:
+		sm83.Data = uint16(sm83.Memory.Read8(sm83.Registers.PC))
+		sm83.Cycles += 4
+		sm83.Registers.PC += 1
+		return
+	case AM_R_D16, AM_D16:
+		lo := uint16(sm83.Memory.Read8(sm83.Registers.PC))
+		hi := uint16(sm83.Memory.Read8(sm83.Registers.PC + 1))
 
 		sm83.Data = lo | (hi << 8)
 		sm83.Registers.PC += 2
+		sm83.Cycles += 8
 		return
-	case AM_R:
-		sm83.Data = sm83.ReadRegister(string(sm83.CurrentInstruction.R1))
+	case AM_MR_R:
+		sm83.Data = sm83.ReadRegister(sm83.CurrentInstruction.R2)
+		sm83.DestData = sm83.ReadRegister(sm83.CurrentInstruction.R1)
+		sm83.DestIsMemory = true
+
+		if sm83.CurrentInstruction.R1 == RK_C {
+			sm83.DestData |= 0xFF00
+		}
 		return
+	case AM_R_MR:
+		address := sm83.ReadRegister(sm83.CurrentInstruction.R2)
+
+		if sm83.CurrentInstruction.R1 == RK_C {
+			address |= 0xFF00
+		}
+
+		sm83.Data = uint16(sm83.Memory.Read8(address))
+		sm83.Cycles += 4
+		return
+	case AM_R_HLI:
+		sm83.Data = sm83.ReadRegister(sm83.CurrentInstruction.R2)
+		sm83.SetRegister(RK_HL, sm83.ReadRegister(RK_HL)+1)
+		sm83.Cycles += 4
+		return
+	case AM_R_HLD:
+		sm83.Data = sm83.ReadRegister(sm83.CurrentInstruction.R2)
+		sm83.SetRegister(RK_HL, sm83.ReadRegister(RK_HL)-1)
+		sm83.Cycles += 4
+		return
+	case AM_HLI_R:
+		// TODO
+	case AM_HLD_R:
+		// TODO
+	case AM_R_A8:
+		// TODO
+	case AM_A8_R:
+		// TODO
+	case AM_HL_SPR:
+		// TODO
+	case AM_D8:
+		// TODO
+	case AM_A16_R:
+		// TODO
+	case AM_D16_R:
+		// TODO
+	case AM_MR_D8:
+		// TODO
+	case AM_MR:
+		// TODO
+	case AM_R_A16:
+		// TODO
 	default:
 		sm83.PrintAndDie("unknown addressing mode (%s)", sm83.CurrentInstruction.AM)
 	}
