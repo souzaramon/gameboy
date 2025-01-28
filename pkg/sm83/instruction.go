@@ -15,17 +15,17 @@ const (
 type InstructionKind string
 
 const (
-	IK_NOP = "NOP"
+	IK_NOP InstructionKind = "NOP"
 )
 
 type ConditionKind string
 
 const (
 	CK_NONE ConditionKind = "NONE"
-	CK_NZ                 = "NZ"
-	CK_Z                  = "Z"
-	CK_NC                 = "NC"
-	CK_C                  = "C"
+	CK_NZ   ConditionKind = "NZ"
+	CK_Z    ConditionKind = "Z"
+	CK_NC   ConditionKind = "NC"
+	CK_C    ConditionKind = "C"
 )
 
 type Instruction struct {
