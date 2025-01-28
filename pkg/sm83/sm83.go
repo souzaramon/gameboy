@@ -140,6 +140,16 @@ func (sm83 *SM83) FetchData() {
 	switch sm83.CurrentInstruction.AM {
 	case AM_IMP:
 		return
+	case AM_A16:
+		lo := uint16(sm83.Memory.Read8(sm83.Registers.PC + 1))
+		hi := uint16(sm83.Memory.Read8(sm83.Registers.PC + 2))
+
+		sm83.Data = lo | (hi << 8)
+		sm83.Registers.PC += 2
+		return
+	case AM_R:
+		sm83.Data = sm83.ReadRegister(string(sm83.CurrentInstruction.R1))
+		return
 	default:
 		sm83.PrintAndDie("unknown addressing mode (%s)", sm83.CurrentInstruction.AM)
 	}
@@ -150,6 +160,15 @@ func (sm83 *SM83) Execute() {
 	case IK_NOP:
 		sm83.Registers.PC++
 		sm83.Cycles += 4
+		return
+	case IK_JP:
+		if sm83.CheckCondition() {
+			sm83.Registers.PC = sm83.Data
+			sm83.Cycles += 4
+			return
+		}
+		sm83.Registers.PC++
+
 		return
 	default:
 		sm83.PrintAndDie("instruction kind (%s) not implemented", sm83.CurrentInstruction.IK)
