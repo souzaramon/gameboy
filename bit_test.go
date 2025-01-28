@@ -1,9 +1,7 @@
-package sm83test
+package sm83
 
 import (
 	"testing"
-
-	"github.com/souzaramon/SM83/pkg/sm83"
 )
 
 func TestGetNth(t *testing.T) {
@@ -29,7 +27,7 @@ func TestGetNth(t *testing.T) {
 	}
 
 	for _, c := range cases {
-		data := sm83.GetNthBit(c.value, c.i)
+		data := GetNthBit(c.value, c.i)
 
 		if data != c.expected {
 			t.Fatalf(`GetNthBit(%b, %d) = %t, want %t`, c.value, c.i, data, c.expected)
@@ -63,7 +61,7 @@ func TestSetNth(t *testing.T) {
 	}
 
 	for _, c := range cases {
-		data := sm83.SetNthBit(c.value, c.i, c.v)
+		data := SetNthBit(c.value, c.i, c.v)
 
 		if data != c.expected {
 			t.Fatalf(`SetNthBit(%b, %d, %t) = %b, want %b`, c.value, c.i, c.v, data, c.expected)
