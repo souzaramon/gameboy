@@ -44,7 +44,11 @@ func TestSingleStepTests(t *testing.T) {
 		file, _ := os.ReadFile(fmt.Sprintf("./sst/v1/%s", file_name))
 
 		var cases []Case
-		json.Unmarshal(file, &cases)
+		err := json.Unmarshal(file, &cases)
+
+		if err != nil {
+			t.Errorf("JSON unmarshal failed")
+		}
 
 		for _, c := range cases {
 			t.Run(c.Name, func(t *testing.T) {
