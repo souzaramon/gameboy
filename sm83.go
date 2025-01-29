@@ -173,6 +173,8 @@ func (cpu *CPU) CheckCondition() bool {
 
 func (cpu *CPU) FetchInstruction() {
 	currentOpcode := cpu.Memory.Read8(cpu.Registers.PC)
+	cpu.Registers.PC += 1
+
 	currentInstruction, exists := InstructionMap[currentOpcode]
 
 	if !exists {
@@ -273,7 +275,6 @@ func (cpu *CPU) FetchData() {
 func (cpu *CPU) Execute() {
 	switch cpu.CurrentInstruction.IK {
 	case IK_NOP:
-		cpu.Registers.PC++
 		cpu.Cycles += 4
 		return
 	case IK_JP:
