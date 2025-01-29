@@ -118,20 +118,20 @@ func (cpu *CPU) SetRegister(rk RegisterKind, value uint16) {
 		cpu.Registers.PC = value
 		return
 	case RK_AF:
-		cpu.Registers.A = uint8(value)
-		cpu.Registers.F = uint8(value >> 8)
+		cpu.Registers.A = uint8(value >> 8)
+		cpu.Registers.F = uint8(value)
 		return
 	case RK_BC:
-		cpu.Registers.B = uint8(value)
-		cpu.Registers.C = uint8(value >> 8)
+		cpu.Registers.B = uint8(value >> 8)
+		cpu.Registers.C = uint8(value)
 		return
 	case RK_DE:
-		cpu.Registers.D = uint8(value)
-		cpu.Registers.E = uint8(value >> 8)
+		cpu.Registers.D = uint8(value >> 8)
+		cpu.Registers.E = uint8(value)
 		return
 	case RK_HL:
-		cpu.Registers.H = uint8(value)
-		cpu.Registers.L = uint8(value >> 8)
+		cpu.Registers.H = uint8(value >> 8)
+		cpu.Registers.L = uint8(value)
 		return
 	default:
 		cpu.PrintAndDie("Unknown register (%s)", rk)
@@ -275,6 +275,10 @@ func (cpu *CPU) FetchData() {
 func (cpu *CPU) Execute() {
 	switch cpu.CurrentInstruction.IK {
 	case IK_NOP:
+		cpu.Cycles += 4
+		return
+	case IK_LD:
+		cpu.SetRegister(cpu.CurrentInstruction.R1, cpu.Data)
 		cpu.Cycles += 4
 		return
 	case IK_JP:

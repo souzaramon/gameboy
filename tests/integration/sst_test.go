@@ -37,6 +37,7 @@ type Case struct {
 func TestSingleStepTests(t *testing.T) {
 	file_names := []string{
 		"00.json",
+		"01.json",
 		"c3.json",
 	}
 

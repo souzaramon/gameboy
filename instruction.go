@@ -52,6 +52,7 @@ type InstructionKind string
 const (
 	IK_NOP InstructionKind = "NOP"
 	IK_JP  InstructionKind = "JP"
+	IK_LD  InstructionKind = "LD"
 )
 
 type ConditionKind string
