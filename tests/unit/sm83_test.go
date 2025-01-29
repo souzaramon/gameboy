@@ -1,7 +1,9 @@
-package sm83
+package unit
 
 import (
 	"testing"
+
+	"github.com/souzaramon/sm83"
 )
 
 func TestSetFlags(t *testing.T) {
@@ -45,7 +47,7 @@ func TestSetFlags(t *testing.T) {
 
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
-			sut := CPU{Registers: Registers{F: c.initial}}
+			sut := sm83.CPU{Registers: sm83.Registers{F: c.initial}}
 			sut.WriteFlags([4]int{c.z, c.n, c.h, c.c})
 
 			if sut.Registers.F != c.expected {
