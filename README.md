@@ -1,6 +1,6 @@
 ## SM83
 
-> aka the GameBoy CPU
+Implementation of the SM83 CPU (GameBoy DMG) as a Go package
 
 ### References
 
