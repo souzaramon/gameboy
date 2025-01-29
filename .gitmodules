@@ -1,0 +1,3 @@
+[submodule "tests/integration/sst"]
+	path = tests/integration/sst
+	url = git@github.com:souzaramon/sm83_sst.git
