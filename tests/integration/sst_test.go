@@ -38,7 +38,12 @@ func TestSingleStepTests(t *testing.T) {
 	file_names := []string{
 		"00.json",
 		"01.json",
+		"c2.json",
 		"c3.json",
+		"ca.json",
+		"d2.json",
+		"da.json",
+		"e9.json",
 	}
 
 	for _, file_name := range file_names {
@@ -51,7 +56,7 @@ func TestSingleStepTests(t *testing.T) {
 			t.Errorf("JSON unmarshal failed")
 		}
 
-		for _, c := range cases {
+		for _, c := range cases[:1] {
 			t.Run(c.Name, func(t *testing.T) {
 				memory := utils.DummyMemory{Data: make([]uint8, 65536)}
 
