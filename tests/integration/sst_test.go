@@ -38,6 +38,9 @@ func TestSingleStepTests(t *testing.T) {
 	file_names := []string{
 		"00.json",
 		"01.json",
+		"11.json",
+		"21.json",
+		"31.json",
 		"c2.json",
 		"c3.json",
 		"ca.json",
