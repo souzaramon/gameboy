@@ -287,7 +287,6 @@ func (cpu *CPU) Execute() {
 			cpu.Cycles += 4
 			return
 		}
-		cpu.Registers.PC++
 		return
 	default:
 		cpu.PrintAndDie("instruction kind (%s) not implemented", cpu.CurrentInstruction.IK)
