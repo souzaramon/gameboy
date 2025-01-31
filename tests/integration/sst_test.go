@@ -84,6 +84,13 @@ func TestSingleStepTests(t *testing.T) {
 		"6c.json",
 		"6d.json",
 		"6f.json",
+		"79.json",
+		"7a.json",
+		"7b.json",
+		"7c.json",
+		"7d.json",
+		"78.json",
+		"7f.json",
 		"c2.json",
 		"c3.json",
 		"ca.json",
@@ -102,7 +109,7 @@ func TestSingleStepTests(t *testing.T) {
 			t.Errorf("JSON unmarshal failed")
 		}
 
-		for _, c := range cases[:1] {
+		for _, c := range cases {
 			t.Run(c.Name, func(t *testing.T) {
 				memory := utils.DummyMemory{Data: make([]uint8, 65536)}
 
