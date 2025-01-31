@@ -278,8 +278,13 @@ func (cpu *CPU) Execute() {
 		cpu.Cycles += 4
 		return
 	case IK_LD:
+		if cpu.DestIsMemory {
+			cpu.Memory.Write8(cpu.DestData, byte(cpu.Data))
+			cpu.Cycles += 4
+			return
+		}
+
 		cpu.SetRegister(cpu.CurrentInstruction.R1, cpu.Data)
-		cpu.Cycles += 4
 		return
 	case IK_JP:
 		if cpu.CheckCondition() {

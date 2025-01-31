@@ -3,6 +3,7 @@ package sm83
 var InstructionMap = map[byte]Instruction{
 	0x00: {IK: IK_NOP, AM: AM_IMP},
 	0x01: {IK: IK_LD, AM: AM_R_D16, R1: RK_BC},
+	0x02: {IK: IK_LD, AM: AM_MR_R, R1: RK_BC, R2: RK_A},
 	0x11: {IK: IK_LD, AM: AM_R_D16, R1: RK_DE},
 	0x21: {IK: IK_LD, AM: AM_R_D16, R1: RK_HL},
 	0x31: {IK: IK_LD, AM: AM_R_D16, R1: RK_SP},
