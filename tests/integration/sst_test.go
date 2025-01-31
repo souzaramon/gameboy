@@ -38,6 +38,7 @@ func TestSingleStepTests(t *testing.T) {
 	file_names := []string{
 		"00.json",
 		"01.json",
+		"02.json",
 		"11.json",
 		"21.json",
 		"31.json",
@@ -99,6 +100,7 @@ func TestSingleStepTests(t *testing.T) {
 
 				if !cmp.Equal(sut.Registers, expect) {
 					t.Logf("CPU Data 0x%02X", sut.Data)
+					// t.Errorf("Expected (B %b, C %b) Got: (B %b, C %b), Data %b", expect.B, expect.C, sut.Registers.B, sut.Registers.C, sut.Data)
 					t.Errorf("Expected \n\t%+v\n\n Got \n\t %+v", expect, sut.Registers)
 				}
 			})
