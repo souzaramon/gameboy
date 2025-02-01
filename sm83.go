@@ -202,6 +202,15 @@ func (cpu *CPU) FetchData() {
 	case AM_R_R:
 		cpu.Data = cpu.ReadRegister(cpu.CurrentInstruction.R2)
 		return
+	case AM_MR_R:
+		cpu.Data = cpu.ReadRegister(cpu.CurrentInstruction.R2)
+		cpu.DestData = cpu.ReadRegister(cpu.CurrentInstruction.R1)
+		cpu.DestIsMemory = true
+
+		if cpu.CurrentInstruction.R1 == RK_C {
+			cpu.DestData |= 0xFF00
+		}
+		return
 	case AM_R_D8:
 		cpu.Data = uint16(cpu.Memory.Read8(cpu.Registers.PC))
 		cpu.Registers.PC += 1
@@ -216,57 +225,6 @@ func (cpu *CPU) FetchData() {
 		cpu.Data = lo | (hi << 8)
 		cpu.Cycles += 8
 		return
-	case AM_MR_R:
-		cpu.Data = cpu.ReadRegister(cpu.CurrentInstruction.R2)
-		cpu.DestData = cpu.ReadRegister(cpu.CurrentInstruction.R1)
-		cpu.DestIsMemory = true
-
-		if cpu.CurrentInstruction.R1 == RK_C {
-			cpu.DestData |= 0xFF00
-		}
-		return
-	case AM_R_MR:
-		address := cpu.ReadRegister(cpu.CurrentInstruction.R2)
-
-		if cpu.CurrentInstruction.R1 == RK_C {
-			address |= 0xFF00
-		}
-
-		cpu.Data = uint16(cpu.Memory.Read8(address))
-		cpu.Cycles += 4
-		return
-	case AM_R_HLI:
-		cpu.Data = cpu.ReadRegister(cpu.CurrentInstruction.R2)
-		cpu.SetRegister(RK_HL, cpu.ReadRegister(RK_HL)+1)
-		cpu.Cycles += 4
-		return
-	case AM_R_HLD:
-		cpu.Data = cpu.ReadRegister(cpu.CurrentInstruction.R2)
-		cpu.SetRegister(RK_HL, cpu.ReadRegister(RK_HL)-1)
-		cpu.Cycles += 4
-		return
-	case AM_HLI_R:
-		// TODO
-	case AM_HLD_R:
-		// TODO
-	case AM_R_A8:
-		// TODO
-	case AM_A8_R:
-		// TODO
-	case AM_HL_SPR:
-		// TODO
-	case AM_D8:
-		// TODO
-	case AM_A16_R:
-		// TODO
-	case AM_D16_R:
-		// TODO
-	case AM_MR_D8:
-		// TODO
-	case AM_MR:
-		// TODO
-	case AM_R_A16:
-		// TODO
 	default:
 		cpu.PrintAndDie("unknown addressing mode (%s)", cpu.CurrentInstruction.AM)
 	}
