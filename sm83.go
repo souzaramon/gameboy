@@ -214,16 +214,25 @@ func (cpu *CPU) FetchData() {
 	case AM_R_D8:
 		cpu.Data = uint16(cpu.Memory.Read8(cpu.Registers.PC))
 		cpu.Registers.PC += 1
-
 		cpu.Cycles += 4
+
 		return
 	case AM_R_D16, AM_D16:
 		lo := uint16(cpu.Memory.Read8(cpu.Registers.PC))
 		hi := uint16(cpu.Memory.Read8(cpu.Registers.PC + 1))
 		cpu.Registers.PC += 2
+		cpu.Cycles += 8
 
 		cpu.Data = lo | (hi << 8)
+		return
+	case AM_R_A16:
+		lo := uint16(cpu.Memory.Read8(cpu.Registers.PC))
+		hi := uint16(cpu.Memory.Read8(cpu.Registers.PC + 1))
+		cpu.Registers.PC += 2
 		cpu.Cycles += 8
+
+		cpu.Data = uint16(cpu.Memory.Read8(lo | (hi << 8)))
+		cpu.Cycles += 2
 		return
 	case AM_D16_R:
 		lo := uint16(cpu.Memory.Read8(cpu.Registers.PC))
