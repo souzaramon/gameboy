@@ -113,6 +113,7 @@ func TestSingleStepTests(t *testing.T) {
 		"da.json",
 		"e9.json",
 		"ea.json",
+		"fa.json",
 	}
 
 	for _, file_name := range file_names {
