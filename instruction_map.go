@@ -5,7 +5,7 @@ var InstructionMap = map[byte]Instruction{
 	0x01: {IK: IK_LD, AM: AM_R_D16, R1: RK_BC},
 	0x02: {IK: IK_LD, AM: AM_MR_R, R1: RK_BC, R2: RK_A},
 	0x06: {IK: IK_LD, AM: AM_R_D8, R1: RK_B},
-	// TODO: 0x08: {IK: IK_LD},
+	0x08: {IK: IK_LD, AM: AM_D16_R, R1: RK_NONE, R2: RK_SP},
 	// TODO: 0x0a: {IK: IK_LD},
 	0x0e: {IK: IK_LD, AM: AM_R_D8, R1: RK_C},
 	0x11: {IK: IK_LD, AM: AM_R_D16, R1: RK_DE},
@@ -91,7 +91,7 @@ var InstructionMap = map[byte]Instruction{
 	0xCA: {IK: IK_JP, AM: AM_D16, CK: CK_Z},
 	0xD2: {IK: IK_JP, AM: AM_D16, CK: CK_NC},
 	0xDA: {IK: IK_JP, AM: AM_D16, CK: CK_C},
-	// TODO: 0xea: {IK: IK_LD}
+	0xea: {IK: IK_LD, AM: AM_D16_R, R1: RK_NONE, R2: RK_A},
 	0xE9: {IK: IK_JP, AM: AM_R, R1: RK_HL, CK: CK_NONE},
 	// TODO: 0xf8: {IK: IK_LD}
 	// TODO: 0xf9: {IK: IK_LD}
