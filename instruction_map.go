@@ -22,8 +22,6 @@ var InstructionMap = map[byte]Instruction{
 	0x32: {IK: IK_LD, AM: AM_HLD_R, R1: RK_HL, R2: RK_A},
 	0x36: {IK: IK_LD, AM: AM_MR_D8, R1: RK_HL},
 	0x3a: {IK: IK_LD, AM: AM_R_HLD, R1: RK_A, R2: RK_HL},
-	// TODO: 0x3a: {IK: IK_LD},
-	0x3a: {IK: IK_LD, AM: AM_R_HLD, R1: RK_A, R2: RK_HL},
 	0x3e: {IK: IK_LD, AM: AM_R_D8, R1: RK_A},
 	0x40: {IK: IK_NOP, AM: AM_IMP},
 	0x41: {IK: IK_LD, AM: AM_R_R, R1: RK_B, R2: RK_C},
