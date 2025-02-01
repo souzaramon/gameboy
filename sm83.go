@@ -297,8 +297,7 @@ func (cpu *CPU) Execute() {
 			}
 
 			cpu.WriteFlags([4]int{0, 0, h, c})
-			cpu.SetRegister(RK_HL, SP+cpu.Data)
-
+			cpu.SetRegister(RK_HL, SP+uint16(int8(cpu.Data)))
 			return
 		}
 

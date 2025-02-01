@@ -60,7 +60,7 @@ func TestSingleStepTests(t *testing.T) {
 			t.Errorf("JSON unmarshal failed")
 		}
 
-		for _, c := range cases[:1] {
+		for _, c := range cases {
 			t.Run(c.Name, func(t *testing.T) {
 				memory := test_utils.DummyMemory{Data: make([]uint8, 65536)}
 
