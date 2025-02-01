@@ -10,9 +10,10 @@ const (
 	AM_D16   AddressingMode = "D16"
 	AM_R_R   AddressingMode = "R_R"
 	AM_R_D8  AddressingMode = "R_D8"
-	AM_R_D16 AddressingMode = "R_D16"
 	AM_R_A16 AddressingMode = "R_A16"
+	AM_R_D16 AddressingMode = "R_D16"
 	AM_D16_R AddressingMode = "D16_R"
+	AM_R_MR  AddressingMode = "R_MR"
 	AM_MR_R  AddressingMode = "MR_R"
 )
 

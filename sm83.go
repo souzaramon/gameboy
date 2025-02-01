@@ -211,6 +211,16 @@ func (cpu *CPU) FetchData() {
 			cpu.DestData |= 0xFF00
 		}
 		return
+	case AM_R_MR:
+		addr := cpu.ReadRegister(cpu.CurrentInstruction.R2)
+
+		if cpu.CurrentInstruction.R2 == RK_C {
+			addr |= 0xFF00
+		}
+
+		cpu.Data = uint16(cpu.Memory.Read8(addr))
+		cpu.Cycles += 4
+		return
 	case AM_R_D8:
 		cpu.Data = uint16(cpu.Memory.Read8(cpu.Registers.PC))
 		cpu.Registers.PC += 1
