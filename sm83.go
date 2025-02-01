@@ -225,6 +225,17 @@ func (cpu *CPU) FetchData() {
 		cpu.Data = lo | (hi << 8)
 		cpu.Cycles += 8
 		return
+	case AM_D16_R:
+		lo := uint16(cpu.Memory.Read8(cpu.Registers.PC))
+		hi := uint16(cpu.Memory.Read8(cpu.Registers.PC + 1))
+		cpu.Registers.PC += 2
+		cpu.Cycles += 8
+		cpu.DestData = lo | (hi << 8)
+		cpu.DestIsMemory = true
+
+		cpu.Data = cpu.ReadRegister(cpu.CurrentInstruction.R2)
+		return
+
 	default:
 		cpu.PrintAndDie("unknown addressing mode (%s)", cpu.CurrentInstruction.AM)
 	}
