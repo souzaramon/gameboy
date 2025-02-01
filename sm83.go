@@ -358,6 +358,14 @@ func (cpu *CPU) Execute() {
 		cpu.WriteRegister(cpu.CurrentInstruction.R1, value)
 		cpu.SetFlags([4]int{z, 0, 1, 0})
 		return
+	case IK_OR:
+		value := cpu.ReadRegister(cpu.CurrentInstruction.R1) | uint16(cpu.Data)
+
+		z := Bool2Int(value == 0)
+
+		cpu.WriteRegister(cpu.CurrentInstruction.R1, value)
+		cpu.SetFlags([4]int{z, 0, 0, 0})
+		return
 	default:
 		cpu.PrintAndDie("instruction kind (%s) not implemented", cpu.CurrentInstruction.IK)
 	}
