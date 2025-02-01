@@ -237,6 +237,11 @@ func (cpu *CPU) Execute() {
 		return
 	case IK_LD:
 		if cpu.DestIsMemory {
+			if cpu.CurrentInstruction.R2 >= RK_AF {
+				cpu.Memory.Write16(cpu.DestData, cpu.Data)
+				cpu.Cycles += 8
+			}
+
 			cpu.Memory.Write8(cpu.DestData, byte(cpu.Data))
 			cpu.Cycles += 4
 			return
