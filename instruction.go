@@ -51,6 +51,7 @@ const (
 	IK_LD  InstructionKind = "LD"
 	IK_ADD InstructionKind = "ADD"
 	IK_SUB InstructionKind = "SUB"
+	IK_AND InstructionKind = "AND"
 )
 
 type ConditionKind string
