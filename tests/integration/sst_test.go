@@ -8,7 +8,7 @@ import (
 
 	"github.com/google/go-cmp/cmp"
 	"github.com/souzaramon/sm83"
-	utils "github.com/souzaramon/sm83/tests"
+	test_utils "github.com/souzaramon/sm83/tests"
 )
 
 type CPUState struct {
@@ -118,7 +118,7 @@ func TestSingleStepTests(t *testing.T) {
 
 		for _, c := range cases {
 			t.Run(c.Name, func(t *testing.T) {
-				memory := utils.DummyMemory{Data: make([]uint8, 65536)}
+				memory := test_utils.DummyMemory{Data: make([]uint8, 65536)}
 
 				for _, item := range c.Initial.Ram {
 					memory.Write8(item[0], byte(item[1]))

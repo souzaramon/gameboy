@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/souzaramon/sm83"
+	test_utils "github.com/souzaramon/sm83/tests"
 )
 
 func main() {
@@ -20,7 +21,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	memory := DummyMemory{Data: rom_data}
+	memory := test_utils.DummyMemory{Data: rom_data}
 
 	cpu := sm83.CPU{
 		Registers: sm83.Registers{
