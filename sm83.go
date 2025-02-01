@@ -85,7 +85,7 @@ func (cpu *CPU) ReadRegister(rk RegisterKind) uint16 {
 	}
 }
 
-func (cpu *CPU) SetRegister(rk RegisterKind, value uint16) {
+func (cpu *CPU) WriteRegister(rk RegisterKind, value uint16) {
 	switch rk {
 	case RK_A:
 		cpu.Registers.A = uint8(value & 0xFF)
@@ -140,7 +140,7 @@ func (cpu *CPU) SetRegister(rk RegisterKind, value uint16) {
 }
 
 // bits: {z, n, h, c}
-func (cpu *CPU) WriteFlags(bits [4]int) {
+func (cpu *CPU) SetFlags(bits [4]int) {
 	for i := 3; i >= 0; i-- {
 		bit := bits[i]
 
@@ -266,26 +266,26 @@ func (cpu *CPU) FetchData() {
 		cpu.DestData = cpu.ReadRegister(cpu.CurrentInstruction.R1)
 		cpu.DestIsMemory = true
 
-		cpu.SetRegister(cpu.CurrentInstruction.R1, cpu.DestData+1)
+		cpu.WriteRegister(cpu.CurrentInstruction.R1, cpu.DestData+1)
 		return
 	case AM_R_HLI:
 		HL := cpu.ReadRegister(cpu.CurrentInstruction.R2)
 		cpu.Data = uint16(cpu.Memory.Read8(HL))
 		cpu.Cycles += 4
-		cpu.SetRegister(cpu.CurrentInstruction.R2, HL+1)
+		cpu.WriteRegister(cpu.CurrentInstruction.R2, HL+1)
 		return
 	case AM_R_HLD:
 		HL := cpu.ReadRegister(cpu.CurrentInstruction.R2)
 		cpu.Data = uint16(cpu.Memory.Read8(HL))
 		cpu.Cycles += 4
-		cpu.SetRegister(cpu.CurrentInstruction.R2, HL-1)
+		cpu.WriteRegister(cpu.CurrentInstruction.R2, HL-1)
 		return
 	case AM_HLD_R:
 		cpu.Data = cpu.ReadRegister(cpu.CurrentInstruction.R2)
 		cpu.DestData = cpu.ReadRegister(cpu.CurrentInstruction.R1)
 		cpu.DestIsMemory = true
 
-		cpu.SetRegister(cpu.CurrentInstruction.R1, cpu.DestData-1)
+		cpu.WriteRegister(cpu.CurrentInstruction.R1, cpu.DestData-1)
 		return
 	default:
 		cpu.PrintAndDie("unknown addressing mode (%s)", cpu.CurrentInstruction.AM)
@@ -315,12 +315,12 @@ func (cpu *CPU) Execute() {
 			h := Bool2Int((SP&0xF)+(cpu.Data&0xF) >= 0x10)
 			c := Bool2Int((SP&0xFF)+(cpu.Data&0xFF) >= 0x100)
 
-			cpu.WriteFlags([4]int{0, 0, h, c})
-			cpu.SetRegister(RK_HL, SP+uint16(int8(cpu.Data)))
+			cpu.SetFlags([4]int{0, 0, h, c})
+			cpu.WriteRegister(RK_HL, SP+uint16(int8(cpu.Data)))
 			return
 		}
 
-		cpu.SetRegister(cpu.CurrentInstruction.R1, cpu.Data)
+		cpu.WriteRegister(cpu.CurrentInstruction.R1, cpu.Data)
 		return
 	case IK_JP:
 		if cpu.CheckCondition() {
@@ -337,8 +337,8 @@ func (cpu *CPU) Execute() {
 		h := Bool2Int((R1&0xF)+(cpu.Data&0xF) >= 0x10)
 		c := Bool2Int((R1&0xFF)+(cpu.Data&0xFF) >= 0x100)
 
-		cpu.WriteFlags([4]int{z, 0, h, c})
-		cpu.SetRegister(cpu.CurrentInstruction.R1, value)
+		cpu.SetFlags([4]int{z, 0, h, c})
+		cpu.WriteRegister(cpu.CurrentInstruction.R1, value)
 		return
 	case IK_SUB:
 		R1 := cpu.ReadRegister(cpu.CurrentInstruction.R1)
@@ -348,15 +348,15 @@ func (cpu *CPU) Execute() {
 		h := Bool2Int(int(R1&0xF)-int(cpu.Data&0xF) < 0)
 		c := Bool2Int(int(R1)-int(cpu.Data) < 0)
 
-		cpu.WriteFlags([4]int{z, 1, h, c})
-		cpu.SetRegister(cpu.CurrentInstruction.R1, value)
+		cpu.SetFlags([4]int{z, 1, h, c})
+		cpu.WriteRegister(cpu.CurrentInstruction.R1, value)
 	case IK_AND:
 		value := cpu.ReadRegister(cpu.CurrentInstruction.R1) & uint16(cpu.Data)
 
 		z := Bool2Int(value == 0)
 
-		cpu.SetRegister(cpu.CurrentInstruction.R1, value)
-		cpu.WriteFlags([4]int{z, 0, 1, 0})
+		cpu.WriteRegister(cpu.CurrentInstruction.R1, value)
+		cpu.SetFlags([4]int{z, 0, 1, 0})
 		return
 	default:
 		cpu.PrintAndDie("instruction kind (%s) not implemented", cpu.CurrentInstruction.IK)
