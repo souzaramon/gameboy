@@ -124,6 +124,7 @@ func TestSingleStepTests(t *testing.T) {
 		"e9.json",
 		"ea.json",
 		"fa.json",
+		"f8.json",
 		"f9.json",
 	}
 
