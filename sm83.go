@@ -268,6 +268,12 @@ func (cpu *CPU) FetchData() {
 
 		cpu.SetRegister(cpu.CurrentInstruction.R1, cpu.DestData+1)
 		return
+	case AM_R_HLI:
+		HL := cpu.ReadRegister(cpu.CurrentInstruction.R2)
+		cpu.Data = uint16(cpu.Memory.Read8(HL))
+		cpu.Cycles += 4
+		cpu.SetRegister(cpu.CurrentInstruction.R2, HL+1)
+		return
 	case AM_HLD_R:
 		cpu.Data = cpu.ReadRegister(cpu.CurrentInstruction.R2)
 		cpu.DestData = cpu.ReadRegister(cpu.CurrentInstruction.R1)
