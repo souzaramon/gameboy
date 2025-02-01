@@ -2,14 +2,16 @@ package sm83
 
 type AddressingMode string
 
+// NOTE: D: Data, MR: Memory Region, R: Register
+// AM_{FROM}, AM_{TO}_{FROM}
 const (
 	AM_IMP   AddressingMode = "IMP"
-	AM_MR_R  AddressingMode = "MR_R"
-	AM_R_D16 AddressingMode = "R_D16"
-	AM_R_D8  AddressingMode = "R_D8"
-	AM_R_R   AddressingMode = "R_R"
-	AM_D16   AddressingMode = "D16"
 	AM_R     AddressingMode = "R"
+	AM_D16   AddressingMode = "D16"
+	AM_R_R   AddressingMode = "R_R"
+	AM_R_D8  AddressingMode = "R_D8"
+	AM_R_D16 AddressingMode = "R_D16"
+	AM_MR_R  AddressingMode = "MR_R"
 )
 
 type RegisterKind string
