@@ -54,6 +54,7 @@ const (
 	IK_AND InstructionKind = "AND"
 	IK_OR  InstructionKind = "OR"
 	IK_XOR InstructionKind = "XOR"
+	IK_CP  InstructionKind = "CP"
 )
 
 type ConditionKind string
