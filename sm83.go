@@ -228,7 +228,7 @@ func (cpu *CPU) FetchData() {
 		cpu.Data = uint16(cpu.Memory.Read8(addr))
 		cpu.Cycles += 4
 		return
-	case AM_R_D8:
+	case AM_R_D8, AM_HL_SPD8:
 		cpu.Data = uint16(cpu.Memory.Read8(cpu.Registers.PC))
 		cpu.Registers.PC += 1
 		cpu.Cycles += 4
@@ -261,7 +261,6 @@ func (cpu *CPU) FetchData() {
 
 		cpu.Data = cpu.ReadRegister(cpu.CurrentInstruction.R2)
 		return
-
 	default:
 		cpu.PrintAndDie("unknown addressing mode (%s)", cpu.CurrentInstruction.AM)
 	}
@@ -281,6 +280,25 @@ func (cpu *CPU) Execute() {
 
 			cpu.Memory.Write8(cpu.DestData, byte(cpu.Data))
 			cpu.Cycles += 4
+			return
+		}
+
+		if cpu.CurrentInstruction.AM == AM_HL_SPD8 {
+			SP := cpu.ReadRegister(RK_SP)
+
+			h := 0
+			if (SP&0xF)+(cpu.Data&0xF) >= 0x10 {
+				h = 1
+			}
+
+			c := 0
+			if (SP&0xFF)+(cpu.Data&0xFF) >= 0x100 {
+				c = 1
+			}
+
+			cpu.WriteFlags([4]int{0, 0, h, c})
+			cpu.SetRegister(RK_HL, SP+cpu.Data)
+
 			return
 		}
 
