@@ -202,6 +202,13 @@ func (cpu *CPU) FetchData() {
 	case AM_R_R:
 		cpu.Data = cpu.ReadRegister(cpu.CurrentInstruction.R2)
 		return
+	case AM_MR_D8:
+		cpu.Data = uint16(cpu.Memory.Read8(cpu.Registers.PC))
+		cpu.DestData = cpu.ReadRegister(cpu.CurrentInstruction.R1)
+		cpu.DestIsMemory = true
+		cpu.Cycles += 4
+		cpu.Registers.PC += 1
+		return
 	case AM_MR_R:
 		cpu.Data = cpu.ReadRegister(cpu.CurrentInstruction.R2)
 		cpu.DestData = cpu.ReadRegister(cpu.CurrentInstruction.R1)

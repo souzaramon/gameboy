@@ -15,6 +15,7 @@ const (
 	AM_D16_R AddressingMode = "D16_R"
 	AM_R_MR  AddressingMode = "R_MR"
 	AM_MR_R  AddressingMode = "MR_R"
+	AM_MR_D8 AddressingMode = "MR_D8"
 )
 
 type RegisterKind string
