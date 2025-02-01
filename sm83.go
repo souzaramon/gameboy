@@ -312,15 +312,8 @@ func (cpu *CPU) Execute() {
 		if cpu.CurrentInstruction.AM == AM_HL_SPD8 {
 			SP := cpu.ReadRegister(RK_SP)
 
-			h := 0
-			if (SP&0xF)+(cpu.Data&0xF) >= 0x10 {
-				h = 1
-			}
-
-			c := 0
-			if (SP&0xFF)+(cpu.Data&0xFF) >= 0x100 {
-				c = 1
-			}
+			h := Bool2Int((SP&0xF)+(cpu.Data&0xF) >= 0x10)
+			c := Bool2Int((SP&0xFF)+(cpu.Data&0xFF) >= 0x100)
 
 			cpu.WriteFlags([4]int{0, 0, h, c})
 			cpu.SetRegister(RK_HL, SP+uint16(int8(cpu.Data)))
