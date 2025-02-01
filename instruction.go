@@ -2,7 +2,7 @@ package sm83
 
 type AddressingMode string
 
-// NOTE: D: Data, MR: Memory Region, R: Register
+// NOTE: D: Data, MR: Memory Region, R: Register, I: Increment, D: Decrement
 // AM_{FROM}, AM_{TO}_{FROM}
 const (
 	AM_IMP     AddressingMode = "IMP"
