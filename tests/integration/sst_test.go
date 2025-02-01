@@ -51,6 +51,7 @@ func TestSingleStepTests(t *testing.T) {
 		"26.json",
 		"2e.json",
 		"31.json",
+		"36.json",
 		"3e.json",
 		"40.json",
 		"41.json",
