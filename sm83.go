@@ -261,6 +261,13 @@ func (cpu *CPU) FetchData() {
 
 		cpu.Data = cpu.ReadRegister(cpu.CurrentInstruction.R2)
 		return
+	case AM_HLI_R:
+		cpu.Data = cpu.ReadRegister(cpu.CurrentInstruction.R2)
+		cpu.DestData = cpu.ReadRegister(cpu.CurrentInstruction.R1)
+		cpu.DestIsMemory = true
+
+		cpu.SetRegister(cpu.CurrentInstruction.R1, cpu.DestData+1)
+		return
 	default:
 		cpu.PrintAndDie("unknown addressing mode (%s)", cpu.CurrentInstruction.AM)
 	}
