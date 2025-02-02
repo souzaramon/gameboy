@@ -139,13 +139,27 @@ func (cpu *CPU) ExecInstruction(opcode byte) {
 	}
 }
 
+func (cpu *CPU) ExecInstructionPrefixed(opcode byte) {
+	switch opcode {
+		case 0x00: break
+	}
+}
+
 func (cpu *CPU) Step() int {
 	cpu.Cycles = 0
 
 	opcode := cpu.M.Read8(cpu.R.PC)
 	cpu.R.PC += 1
 
-	cpu.ExecInstruction(opcode)
+	switch (opcode) {
+		case 0xcb:
+			opcode := cpu.M.Read8(cpu.R.PC)
+			cpu.R.PC += 1
+			
+			cpu.ExecInstructionPrefixed(opcode)
+		default:
+			cpu.ExecInstruction(opcode)
+	}
 
 	return cpu.Cycles
 }
