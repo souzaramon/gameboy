@@ -31,16 +31,21 @@ type Registers struct {
 	SP uint16
 }
 
-// bits: {z, n, h, c}
-func (r *Registers) SetFlags(flags [4]int) {
-	for index, value := range flags {
-		if value != -1 {
-			position := 7 - index
-			r.F = SetNthBit(r.F, position, value > 0)
-		}
-	}
+func (r *Registers) SetZ(v bool) {
+	r.F = SetNthBit(r.F, 7, v)
 }
 
+func (r *Registers) SetN(v bool) {
+	r.F = SetNthBit(r.F, 6, v)
+}
+
+func (r *Registers) SetH(v bool) {
+	r.F = SetNthBit(r.F, 5, v)
+}
+
+func (r *Registers) SetC(v bool) {
+	r.F = SetNthBit(r.F, 4, v)
+}
 
 func (r *Registers) GetByName8(reg string) byte {
 	switch reg {
