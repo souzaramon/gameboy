@@ -99,28 +99,20 @@ func (cpu *CPU) SetRegister8(reg string, value byte) {
 	switch reg {
 	case R_A:
 		cpu.Registers.A = uint8(value & 0xFF)
-		return
 	case R_F:
 		cpu.Registers.F = uint8(value & 0xFF)
-		return
 	case R_B:
 		cpu.Registers.B = uint8(value & 0xFF)
-		return
 	case R_C:
 		cpu.Registers.C = uint8(value & 0xFF)
-		return
 	case R_D:
 		cpu.Registers.D = uint8(value & 0xFF)
-		return
 	case R_E:
 		cpu.Registers.E = uint8(value & 0xFF)
-		return
 	case R_H:
 		cpu.Registers.H = uint8(value & 0xFF)
-		return
 	case R_L:
 		cpu.Registers.L = uint8(value & 0xFF)
-		return
 	}
 }
 
@@ -133,19 +125,15 @@ func (cpu *CPU) SetRegister16(reg string, value uint16) {
 	case R_AF:
 		cpu.Registers.A = uint8(value >> 8)
 		cpu.Registers.F = uint8(value)
-		return
 	case R_BC:
 		cpu.Registers.B = uint8(value >> 8)
 		cpu.Registers.C = uint8(value)
-		return
 	case R_DE:
 		cpu.Registers.D = uint8(value >> 8)
 		cpu.Registers.E = uint8(value)
-		return
 	case R_HL:
 		cpu.Registers.H = uint8(value >> 8)
 		cpu.Registers.L = uint8(value)
-		return
 	}
 }
 
