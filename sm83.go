@@ -6,15 +6,7 @@ import (
 )
 
 type CPU struct {
-	Cycles int
-
-	CurrentOpcode      byte
-	CurrentInstruction Instruction
-
-	Data         uint16
-	DestData     uint16
-	DestIsMemory bool
-
+	Cycles    int
 	Registers Registers
 
 	Memory interface {
@@ -25,118 +17,11 @@ type CPU struct {
 	}
 }
 
-type Registers struct {
-	A  byte
-	F  byte
-	B  byte
-	C  byte
-	D  byte
-	E  byte
-	H  byte
-	L  byte
-	PC uint16
-	SP uint16
-}
-
-func (cpu *CPU) Print(message string, a ...any) {
+func (cpu *CPU) DD(message string, a ...any) {
 	fmt.Printf("[PC 0x%04X] ", cpu.Registers.PC)
 	fmt.Printf(message, a...)
 	fmt.Printf("\n")
-}
-
-func (cpu *CPU) PrintAndDie(message string, a ...any) {
-	cpu.Print(message, a...)
 	os.Exit(1)
-}
-
-func (cpu *CPU) ReadRegister(rk RegisterKind) uint16 {
-	switch rk {
-	case RK_A:
-		return uint16(cpu.Registers.A)
-	case RK_F:
-		return uint16(cpu.Registers.F)
-	case RK_B:
-		return uint16(cpu.Registers.B)
-	case RK_C:
-		return uint16(cpu.Registers.C)
-	case RK_D:
-		return uint16(cpu.Registers.D)
-	case RK_E:
-		return uint16(cpu.Registers.E)
-	case RK_H:
-		return uint16(cpu.Registers.H)
-	case RK_L:
-		return uint16(cpu.Registers.L)
-	case RK_SP:
-		return cpu.Registers.SP
-	case RK_PC:
-		return cpu.Registers.PC
-	case RK_AF:
-		return (uint16(cpu.Registers.A) << 8) | uint16(cpu.Registers.F)
-	case RK_BC:
-		return (uint16(cpu.Registers.B) << 8) | uint16(cpu.Registers.C)
-	case RK_DE:
-		return (uint16(cpu.Registers.D) << 8) | uint16(cpu.Registers.E)
-	case RK_HL:
-		return (uint16(cpu.Registers.H) << 8) | uint16(cpu.Registers.L)
-	default:
-		cpu.PrintAndDie("Unknown register (%s)", rk)
-		return 0
-	}
-}
-
-func (cpu *CPU) WriteRegister(rk RegisterKind, value uint16) {
-	switch rk {
-	case RK_A:
-		cpu.Registers.A = uint8(value & 0xFF)
-		return
-	case RK_F:
-		cpu.Registers.F = uint8(value & 0xFF)
-		return
-	case RK_B:
-		cpu.Registers.B = uint8(value & 0xFF)
-		return
-	case RK_C:
-		cpu.Registers.C = uint8(value & 0xFF)
-		return
-	case RK_D:
-		cpu.Registers.D = uint8(value & 0xFF)
-		return
-	case RK_E:
-		cpu.Registers.E = uint8(value & 0xFF)
-		return
-	case RK_H:
-		cpu.Registers.H = uint8(value & 0xFF)
-		return
-	case RK_L:
-		cpu.Registers.L = uint8(value & 0xFF)
-		return
-	case RK_SP:
-		cpu.Registers.SP = value
-		return
-	case RK_PC:
-		cpu.Registers.PC = value
-		return
-	case RK_AF:
-		cpu.Registers.A = uint8(value >> 8)
-		cpu.Registers.F = uint8(value)
-		return
-	case RK_BC:
-		cpu.Registers.B = uint8(value >> 8)
-		cpu.Registers.C = uint8(value)
-		return
-	case RK_DE:
-		cpu.Registers.D = uint8(value >> 8)
-		cpu.Registers.E = uint8(value)
-		return
-	case RK_HL:
-		cpu.Registers.H = uint8(value >> 8)
-		cpu.Registers.L = uint8(value)
-		return
-	default:
-		cpu.PrintAndDie("Unknown register (%s)", rk)
-		return
-	}
 }
 
 // bits: {z, n, h, c}
@@ -151,241 +36,172 @@ func (cpu *CPU) SetFlags(bits [4]int) {
 	}
 }
 
-func (cpu *CPU) CheckCondition() bool {
-	flag_z := GetNthBit(cpu.Registers.F, 7)
-	flag_c := GetNthBit(cpu.Registers.F, 4)
-
-	switch cpu.CurrentInstruction.CK {
-	case CK_NONE:
-		return true
-	case CK_C:
-		return flag_c
-	case CK_NC:
-		return !flag_c
-	case CK_Z:
-		return flag_z
-	case CK_NZ:
-		return !flag_z
-	default:
-		return false
-	}
-}
-
-func (cpu *CPU) FetchInstruction() {
-	currentOpcode := cpu.Memory.Read8(cpu.Registers.PC)
-	cpu.Registers.PC += 1
-
-	currentInstruction, exists := InstructionMap[currentOpcode]
-
-	if !exists {
-		cpu.PrintAndDie("unknown instruction (0x%02X)", currentOpcode)
-	} else {
-		cpu.Print(
-			"opcode (0x%02X), kind (%s), am (%s)",
-			currentOpcode,
-			currentInstruction.IK,
-			currentInstruction.AM,
-		)
-	}
-
-	cpu.CurrentOpcode = currentOpcode
-	cpu.CurrentInstruction = currentInstruction
-}
-
-func (cpu *CPU) FetchData() {
-	switch cpu.CurrentInstruction.AM {
-	case AM_IMP:
-		return
-	case AM_R:
-		cpu.Data = cpu.ReadRegister(cpu.CurrentInstruction.R1)
-		return
-	case AM_R_R:
-		cpu.Data = cpu.ReadRegister(cpu.CurrentInstruction.R2)
-		return
-	case AM_MR_D8:
-		cpu.Data = uint16(cpu.Memory.Read8(cpu.Registers.PC))
-		cpu.DestData = cpu.ReadRegister(cpu.CurrentInstruction.R1)
-		cpu.DestIsMemory = true
-		cpu.Cycles += 4
-		cpu.Registers.PC += 1
-		return
-	case AM_MR_R:
-		cpu.Data = cpu.ReadRegister(cpu.CurrentInstruction.R2)
-		cpu.DestData = cpu.ReadRegister(cpu.CurrentInstruction.R1)
-		cpu.DestIsMemory = true
-
-		if cpu.CurrentInstruction.R1 == RK_C {
-			cpu.DestData |= 0xFF00
-		}
-		return
-	case AM_R_MR:
-		addr := cpu.ReadRegister(cpu.CurrentInstruction.R2)
-
-		if cpu.CurrentInstruction.R2 == RK_C {
-			addr |= 0xFF00
-		}
-
-		cpu.Data = uint16(cpu.Memory.Read8(addr))
-		cpu.Cycles += 4
-		return
-	case AM_R_D8, AM_HL_SPD8:
-		cpu.Data = uint16(cpu.Memory.Read8(cpu.Registers.PC))
-		cpu.Registers.PC += 1
-		cpu.Cycles += 4
-
-		return
-	case AM_R_D16, AM_D16:
-		lo := uint16(cpu.Memory.Read8(cpu.Registers.PC))
-		hi := uint16(cpu.Memory.Read8(cpu.Registers.PC + 1))
-		cpu.Registers.PC += 2
-		cpu.Cycles += 8
-
-		cpu.Data = lo | (hi << 8)
-		return
-	case AM_R_A16:
-		lo := uint16(cpu.Memory.Read8(cpu.Registers.PC))
-		hi := uint16(cpu.Memory.Read8(cpu.Registers.PC + 1))
-		cpu.Registers.PC += 2
-		cpu.Cycles += 8
-
-		cpu.Data = uint16(cpu.Memory.Read8(lo | (hi << 8)))
-		cpu.Cycles += 2
-		return
-	case AM_D16_R:
-		lo := uint16(cpu.Memory.Read8(cpu.Registers.PC))
-		hi := uint16(cpu.Memory.Read8(cpu.Registers.PC + 1))
-		cpu.Registers.PC += 2
-		cpu.Cycles += 8
-		cpu.DestData = lo | (hi << 8)
-		cpu.DestIsMemory = true
-
-		cpu.Data = cpu.ReadRegister(cpu.CurrentInstruction.R2)
-		return
-	case AM_HLI_R:
-		cpu.Data = cpu.ReadRegister(cpu.CurrentInstruction.R2)
-		cpu.DestData = cpu.ReadRegister(cpu.CurrentInstruction.R1)
-		cpu.DestIsMemory = true
-
-		cpu.WriteRegister(cpu.CurrentInstruction.R1, cpu.DestData+1)
-		return
-	case AM_R_HLI:
-		HL := cpu.ReadRegister(cpu.CurrentInstruction.R2)
-		cpu.Data = uint16(cpu.Memory.Read8(HL))
-		cpu.Cycles += 4
-		cpu.WriteRegister(cpu.CurrentInstruction.R2, HL+1)
-		return
-	case AM_R_HLD:
-		HL := cpu.ReadRegister(cpu.CurrentInstruction.R2)
-		cpu.Data = uint16(cpu.Memory.Read8(HL))
-		cpu.Cycles += 4
-		cpu.WriteRegister(cpu.CurrentInstruction.R2, HL-1)
-		return
-	case AM_HLD_R:
-		cpu.Data = cpu.ReadRegister(cpu.CurrentInstruction.R2)
-		cpu.DestData = cpu.ReadRegister(cpu.CurrentInstruction.R1)
-		cpu.DestIsMemory = true
-
-		cpu.WriteRegister(cpu.CurrentInstruction.R1, cpu.DestData-1)
-		return
-	default:
-		cpu.PrintAndDie("unknown addressing mode (%s)", cpu.CurrentInstruction.AM)
-	}
-}
-
-func (cpu *CPU) Execute() {
-	switch cpu.CurrentInstruction.IK {
-	case IK_NOP:
-		cpu.Cycles += 4
-		return
-	case IK_LD:
-		if cpu.DestIsMemory {
-			if cpu.CurrentInstruction.R2 >= RK_AF {
-				cpu.Memory.Write16(cpu.DestData, cpu.Data)
-				cpu.Cycles += 8
-			}
-
-			cpu.Memory.Write8(cpu.DestData, byte(cpu.Data))
-			cpu.Cycles += 4
-			return
-		}
-
-		if cpu.CurrentInstruction.AM == AM_HL_SPD8 {
-			SP := cpu.ReadRegister(RK_SP)
-
-			h := Bool2Int((SP&0xF)+(cpu.Data&0xF) >= 0x10)
-			c := Bool2Int((SP&0xFF)+(cpu.Data&0xFF) >= 0x100)
-
-			cpu.SetFlags([4]int{0, 0, h, c})
-			cpu.WriteRegister(RK_HL, SP+uint16(int8(cpu.Data)))
-			return
-		}
-
-		cpu.WriteRegister(cpu.CurrentInstruction.R1, cpu.Data)
-		return
-	case IK_JP:
-		if cpu.CheckCondition() {
-			cpu.Registers.PC = cpu.Data
-			cpu.Cycles += 4
-			return
-		}
-		return
-	case IK_ADD:
-		R1 := cpu.ReadRegister(cpu.CurrentInstruction.R1)
-		value := R1 + cpu.Data
-
-		z := Bool2Int((value & 0xFF) == 0)
-		h := Bool2Int((R1&0xF)+(cpu.Data&0xF) >= 0x10)
-		c := Bool2Int((R1&0xFF)+(cpu.Data&0xFF) >= 0x100)
-
-		cpu.SetFlags([4]int{z, 0, h, c})
-		cpu.WriteRegister(cpu.CurrentInstruction.R1, value)
-		return
-	case IK_SUB:
-		R1 := cpu.ReadRegister(cpu.CurrentInstruction.R1)
-		value := R1 - cpu.Data
-
-		z := Bool2Int((value & 0xFF) == 0)
-		h := Bool2Int(int(R1&0xF)-int(cpu.Data&0xF) < 0)
-		c := Bool2Int(int(R1)-int(cpu.Data) < 0)
-
-		cpu.SetFlags([4]int{z, 1, h, c})
-		cpu.WriteRegister(cpu.CurrentInstruction.R1, value)
-	case IK_AND:
-		value := cpu.ReadRegister(cpu.CurrentInstruction.R1) & uint16(cpu.Data)
-		cpu.WriteRegister(cpu.CurrentInstruction.R1, value)
-		cpu.SetFlags([4]int{Bool2Int(value == 0), 0, 1, 0})
-		return
-	case IK_OR:
-		value := cpu.ReadRegister(cpu.CurrentInstruction.R1) | uint16(cpu.Data)
-		cpu.WriteRegister(cpu.CurrentInstruction.R1, value)
-		cpu.SetFlags([4]int{Bool2Int(value == 0), 0, 0, 0})
-		return
-	case IK_XOR:
-		value := cpu.ReadRegister(cpu.CurrentInstruction.R1) ^ uint16(cpu.Data)
-		cpu.WriteRegister(cpu.CurrentInstruction.R1, value)
-		cpu.SetFlags([4]int{Bool2Int(value == 0), 0, 0, 0})
-		return
-	case IK_CP:
-		R1 := cpu.ReadRegister(cpu.CurrentInstruction.R1)
-		value := int(R1) - int(cpu.Data)
-
-		z := Bool2Int(value == 0)
-		h := Bool2Int((int(R1&0x0F) - int(cpu.Data&0x0f)) < 0)
-		c := Bool2Int(value < 0)
-
-		cpu.SetFlags([4]int{z, 1, h, c})
-		return
-	default:
-		cpu.PrintAndDie("instruction kind (%s) not implemented", cpu.CurrentInstruction.IK)
-	}
-}
-
 func (cpu *CPU) Step() int {
 	cpu.Cycles = 0
 
-	cpu.FetchInstruction()
-	cpu.FetchData()
-	cpu.Execute()
+	currentOpcode := cpu.Memory.Read8(cpu.Registers.PC)
+	cpu.Registers.PC += 1
+
+	switch currentOpcode {
+	case 0x00, 0x40, 0x49, 0x52, 0x5b, 0x64, 0x6d, 0x7f:
+		break // NOP
+	case 0x01:
+		cpu.LD_r16_n16(R_BC)
+	case 0x02:
+		cpu.LD_r16_A(R_BC)
+	case 0x06:
+		cpu.LD_r8_n8(R_B)
+	case 0x08:
+		// TODO
+	case 0x0a:
+		cpu.LD_A_r16(R_BC)
+	case 0x0e:
+		cpu.LD_r8_n8(R_C)
+	case 0x11:
+		cpu.LD_r16_n16(R_DE)
+	case 0x12:
+		cpu.LD_r16_A(R_DE)
+	case 0x16:
+		cpu.LD_r8_n8(R_D)
+	case 0x1a:
+		cpu.LD_A_r16(R_DE)
+	case 0x1e:
+		cpu.LD_r8_n8(R_E)
+	case 0x21:
+		cpu.LD_r16_n16(R_HL)
+	case 0x22:
+		// TODO
+	case 0x26:
+		cpu.LD_r8_n8(R_H)
+	case 0x2a:
+		// TODO
+	case 0x2e:
+		cpu.LD_r8_n8(R_L)
+	case 0x31:
+		// TODO
+	case 0x32:
+		// TODO
+	case 0x36:
+		// TODO
+	case 0x3a:
+		// TODO
+	case 0x3e:
+		cpu.LD_r8_n8(R_A)
+	case 0x41:
+		cpu.LD_r8_r8(R_B, R_C)
+	case 0x42:
+		cpu.LD_r8_r8(R_B, R_D)
+	case 0x43:
+		cpu.LD_r8_r8(R_B, R_E)
+	case 0x44:
+		cpu.LD_r8_r8(R_B, R_H)
+	case 0x45:
+		cpu.LD_r8_r8(R_B, R_L)
+	case 0x46:
+		cpu.LD_r8_HL(R_B)
+	case 0x47:
+		cpu.LD_r8_r8(R_B, R_A)
+	case 0x48:
+		cpu.LD_r8_r8(R_C, R_B)
+	case 0x4a:
+		cpu.LD_r8_r8(R_C, R_D)
+	case 0x4b:
+		cpu.LD_r8_r8(R_C, R_E)
+	case 0x4c:
+		cpu.LD_r8_r8(R_C, R_H)
+	case 0x4d:
+		cpu.LD_r8_r8(R_C, R_L)
+	case 0x4e:
+		cpu.LD_r8_HL(R_C)
+	case 0x4f:
+		cpu.LD_r8_r8(R_C, R_A)
+	case 0x50:
+		cpu.LD_r8_r8(R_D, R_B)
+	case 0x51:
+		cpu.LD_r8_r8(R_D, R_C)
+	case 0x53:
+		cpu.LD_r8_r8(R_D, R_E)
+	case 0x54:
+		cpu.LD_r8_r8(R_D, R_H)
+	case 0x55:
+		cpu.LD_r8_r8(R_D, R_L)
+	case 0x56:
+		cpu.LD_r8_HL(R_D)
+	case 0x57:
+		cpu.LD_r8_r8(R_D, R_A)
+	case 0x58:
+		cpu.LD_r8_r8(R_E, R_B)
+	case 0x59:
+		cpu.LD_r8_r8(R_E, R_C)
+	case 0x5a:
+		cpu.LD_r8_r8(R_E, R_D)
+	case 0x5c:
+		cpu.LD_r8_r8(R_E, R_H)
+	case 0x5d:
+		cpu.LD_r8_r8(R_E, R_L)
+	case 0x5e:
+		cpu.LD_r8_HL(R_E)
+	case 0x5f:
+		cpu.LD_r8_r8(R_E, R_A)
+	case 0x60:
+		cpu.LD_r8_r8(R_H, R_B)
+	case 0x61:
+		cpu.LD_r8_r8(R_H, R_C)
+	case 0x62:
+		cpu.LD_r8_r8(R_H, R_D)
+	case 0x63:
+		cpu.LD_r8_r8(R_H, R_E)
+	case 0x65:
+		cpu.LD_r8_r8(R_H, R_L)
+	case 0x66:
+		cpu.LD_r8_HL(R_H)
+	case 0x67:
+		cpu.LD_r8_r8(R_H, R_A)
+	case 0x68:
+		cpu.LD_r8_r8(R_L, R_B)
+	case 0x69:
+		cpu.LD_r8_r8(R_L, R_C)
+	case 0x6a:
+		cpu.LD_r8_r8(R_L, R_D)
+	case 0x6b:
+		cpu.LD_r8_r8(R_L, R_E)
+	case 0x6c:
+		cpu.LD_r8_r8(R_L, R_H)
+	case 0x6e:
+		cpu.LD_r8_HL(R_L)
+	case 0x6f:
+		cpu.LD_r8_r8(R_L, R_A)
+	case 0x70:
+		cpu.LD_HL_n8(R_B)
+	case 0x71:
+		cpu.LD_HL_n8(R_C)
+	case 0x72:
+		cpu.LD_HL_n8(R_D)
+	case 0x73:
+		cpu.LD_HL_n8(R_E)
+	case 0x74:
+		cpu.LD_HL_n8(R_H)
+	case 0x75:
+		cpu.LD_HL_n8(R_L)
+	case 0x77:
+		cpu.LD_HL_n8(R_A)
+	case 0x78:
+		cpu.LD_r8_r8(R_A, R_B)
+	case 0x79:
+		cpu.LD_r8_r8(R_A, R_C)
+	case 0x7a:
+		cpu.LD_r8_r8(R_A, R_D)
+	case 0x7b:
+		cpu.LD_r8_r8(R_A, R_E)
+	case 0x7c:
+		cpu.LD_r8_r8(R_A, R_H)
+	case 0x7d:
+		cpu.LD_r8_r8(R_A, R_L)
+	case 0x7e:
+		cpu.LD_r8_HL(R_A)
+	case 0xf9:
+		// TODO
+	}
 
 	return cpu.Cycles
 }
