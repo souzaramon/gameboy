@@ -115,3 +115,19 @@ func (cpu *CPU) LD_n16_SP() {
 	cpu.Memory.Write16(addr, cpu.GetRegister16(R_SP))
 	cpu.Registers.PC += 2
 }
+
+// ADD A,r8
+// Add the value in r8 to A.
+func (cpu *CPU) ADD_A_r8(r2 string) {
+	A := cpu.GetRegister8(R_A)
+	r8 := cpu.GetRegister8(r2)
+
+	sum := A + r8
+
+	z := Bool2Int((sum & 0xFF) == 0)
+	h := Bool2Int((A&0xF)+(r8&0xF) >= 0x10)
+	c := Bool2Int(uint16(A) + uint16(r8) >= 0xFF)
+
+	cpu.SetFlags([4]int{z, 0, h, c})
+	cpu.SetRegister8(R_A, sum)
+}

@@ -222,6 +222,13 @@ func (cpu *CPU) Step() int {
 		case 0x7c: cpu.LD_r8_r8(R_A, R_H)
 		case 0x7d: cpu.LD_r8_r8(R_A, R_L)
 		case 0x7e: cpu.LD_r8_HL(R_A)
+		case 0x80: cpu.ADD_A_r8(R_B)
+		case 0x81: cpu.ADD_A_r8(R_C)
+		case 0x82: cpu.ADD_A_r8(R_D)
+		case 0x83: cpu.ADD_A_r8(R_E)
+		case 0x84: cpu.ADD_A_r8(R_H)
+		case 0x85: cpu.ADD_A_r8(R_L)
+		case 0x87: cpu.ADD_A_r8(R_A)
 		case 0xf9: cpu.LD_SP_HL()
 	}
 
