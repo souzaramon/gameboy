@@ -1,4 +1,4 @@
-package sm83
+package LR35902
 
 func (cpu *CPU) LD_r8_r8(r1 string, r2 string) {
 	cpu.Registers.SetR8(r1, cpu.Registers.GetR8(r2))

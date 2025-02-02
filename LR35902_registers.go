@@ -1,4 +1,4 @@
-package sm83
+package LR35902
 
 const (
 	R_NONE = "NONE"

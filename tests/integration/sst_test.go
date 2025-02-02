@@ -7,8 +7,8 @@ import (
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
-	"github.com/souzaramon/sm83"
-	test_utils "github.com/souzaramon/sm83/tests"
+	"github.com/souzaramon/LR35902"
+	test_utils "github.com/souzaramon/LR35902/tests"
 )
 
 type CPUState struct {
@@ -64,9 +64,9 @@ func TestSingleStepTests(t *testing.T) {
 					memory.Write8(item[0], byte(item[1]))
 				}
 
-				sut := sm83.CPU{
+				sut := LR35902.CPU{
 					Memory: &memory,
-					Registers: sm83.Registers{
+					Registers: LR35902.Registers{
 						A:  c.Initial.A,
 						F:  c.Initial.F,
 						B:  c.Initial.B,
@@ -79,7 +79,7 @@ func TestSingleStepTests(t *testing.T) {
 						SP: c.Initial.SP,
 					}}
 
-				expect := sm83.Registers{
+				expect := LR35902.Registers{
 					A:  c.Final.A,
 					F:  c.Final.F,
 					B:  c.Final.B,

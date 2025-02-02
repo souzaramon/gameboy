@@ -1,4 +1,4 @@
-package sm83
+package LR35902
 
 func GetNthBit(b byte, n int) bool {
 	return b&(byte(1)<<n) != 0
