@@ -43,16 +43,13 @@ type CPU struct {
 	}
 }
 
-// TODO:
 // bits: {z, n, h, c}
-func (cpu *CPU) SetFlags(bits [4]int) {
-	for i := 3; i >= 0; i-- {
-		bit := bits[i]
-
-		if bit != -1 {
-			cpu.Registers.F = SetNthBit(cpu.Registers.F, 7-i, bit > 0)
+func (cpu *CPU) SetFlags(flags [4]int) {
+	for index, value := range flags {
+		if value != -1 {
+			position := 7 - index
+			cpu.Registers.F = SetNthBit(cpu.Registers.F, position, value > 0)
 		}
-
 	}
 }
 
@@ -129,6 +126,10 @@ func (cpu *CPU) SetRegister8(reg string, value byte) {
 
 func (cpu *CPU) SetRegister16(reg string, value uint16) {
 	switch reg {
+	case R_SP:
+		cpu.Registers.SP = value
+	case R_PC:
+		cpu.Registers.PC = value
 	case R_AF:
 		cpu.Registers.A = uint8(value >> 8)
 		cpu.Registers.F = uint8(value)
@@ -164,7 +165,7 @@ func (cpu *CPU) Step() int {
 	case 0x06:
 		cpu.LD_r8_n8(R_B)
 	case 0x08:
-		// TODO
+		cpu.LD_n16_SP()
 	case 0x0a:
 		cpu.LD_A_r16(R_BC)
 	case 0x0e:
@@ -182,21 +183,21 @@ func (cpu *CPU) Step() int {
 	case 0x21:
 		cpu.LD_r16_n16(R_HL)
 	case 0x22:
-		// TODO
+		cpu.LD_HLI_A()
 	case 0x26:
 		cpu.LD_r8_n8(R_H)
 	case 0x2a:
-		// TODO
+		cpu.LD_A_HLI()
 	case 0x2e:
 		cpu.LD_r8_n8(R_L)
 	case 0x31:
-		// TODO
+		cpu.LD_SP_n16()
 	case 0x32:
-		// TODO
+		cpu.LD_HLD_A()
 	case 0x36:
-		// TODO
+		cpu.LD_HL_n8()
 	case 0x3a:
-		// TODO
+		cpu.LD_A_HLD()
 	case 0x3e:
 		cpu.LD_r8_n8(R_A)
 	case 0x41:
@@ -284,19 +285,19 @@ func (cpu *CPU) Step() int {
 	case 0x6f:
 		cpu.LD_r8_r8(R_L, R_A)
 	case 0x70:
-		cpu.LD_HL_n8(R_B)
+		cpu.LD_HL_r8(R_B)
 	case 0x71:
-		cpu.LD_HL_n8(R_C)
+		cpu.LD_HL_r8(R_C)
 	case 0x72:
-		cpu.LD_HL_n8(R_D)
+		cpu.LD_HL_r8(R_D)
 	case 0x73:
-		cpu.LD_HL_n8(R_E)
+		cpu.LD_HL_r8(R_E)
 	case 0x74:
-		cpu.LD_HL_n8(R_H)
+		cpu.LD_HL_r8(R_H)
 	case 0x75:
-		cpu.LD_HL_n8(R_L)
+		cpu.LD_HL_r8(R_L)
 	case 0x77:
-		cpu.LD_HL_n8(R_A)
+		cpu.LD_HL_r8(R_A)
 	case 0x78:
 		cpu.LD_r8_r8(R_A, R_B)
 	case 0x79:
@@ -312,7 +313,7 @@ func (cpu *CPU) Step() int {
 	case 0x7e:
 		cpu.LD_r8_HL(R_A)
 	case 0xf9:
-		// TODO
+		cpu.LD_SP_HL()
 	}
 
 	return cpu.Cycles

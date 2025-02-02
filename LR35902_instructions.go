@@ -40,6 +40,13 @@ func (cpu *CPU) LD_HL_r8(r2 string) {
 	cpu.Memory.Write8(cpu.GetRegister16(R_HL), cpu.GetRegister8(r2))
 }
 
+// LD [HL],n8
+// Copy the value n8 into the byte pointed to by HL.
+func (cpu *CPU) LD_HL_n8() {
+	cpu.Memory.Write8(cpu.GetRegister16(R_HL), cpu.Memory.Read8(cpu.Registers.PC))
+	cpu.Registers.PC += 1
+}
+
 // LD SP,n16
 // Copy the value n16 into register SP.
 func (cpu *CPU) LD_SP_n16() {
@@ -57,4 +64,54 @@ func (cpu *CPU) LD_A_r16(r2 string) {
 // Copy the value pointed to by HL into register r8.
 func (cpu *CPU) LD_r8_HL(r1 string) {
 	cpu.SetRegister8(r1, cpu.Memory.Read8(cpu.GetRegister16(R_HL)))
+}
+
+// LD [HLI],A
+// Copy the value in register A into the byte pointed by HL and increment HL afterwards.
+func (cpu *CPU) LD_HLI_A() {
+	HL := cpu.GetRegister16(R_HL)
+
+	cpu.Memory.Write8(HL, cpu.GetRegister8(R_A))
+	cpu.SetRegister16(R_HL, HL+1)
+}
+
+// LD [HLD],A
+// Copy the value in register A into the byte pointed by HL and decrement HL afterwards.
+func (cpu *CPU) LD_HLD_A() {
+	HL := cpu.GetRegister16(R_HL)
+
+	cpu.Memory.Write8(HL, cpu.GetRegister8(R_A))
+	cpu.SetRegister16(R_HL, HL-1)
+}
+
+// LD A,[HLI]
+// Copy the byte pointed to by HL into register A, and increment HL afterwards.
+func (cpu *CPU) LD_A_HLI() {
+	HL := cpu.GetRegister16(R_HL)
+
+	cpu.SetRegister8(R_A, cpu.Memory.Read8(HL))
+	cpu.SetRegister16(R_HL, HL+1)
+}
+
+// LD A,[HLD]
+// Copy the byte pointed to by HL into register A, and decrement HL afterwards.
+func (cpu *CPU) LD_A_HLD() {
+	HL := cpu.GetRegister16(R_HL)
+
+	cpu.SetRegister8(R_A, cpu.Memory.Read8(HL))
+	cpu.SetRegister16(R_HL, HL-1)
+}
+
+// LD SP,HL
+// Copy register HL into register SP.
+func (cpu *CPU) LD_SP_HL() {
+	cpu.SetRegister16(R_SP, cpu.GetRegister16(R_HL))
+}
+
+// LD [n16],SP
+// Copy SP & $FF at address n16 and SP >> 8 at address n16 + 1.
+func (cpu *CPU) LD_n16_SP() {
+	addr := cpu.Memory.Read16(cpu.Registers.PC)
+	cpu.Memory.Write16(addr, cpu.GetRegister16(R_SP))
+	cpu.Registers.PC += 2
 }
