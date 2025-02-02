@@ -78,7 +78,7 @@ func TestSingleStepTests(t *testing.T) {
 				}
 
 				sut := LR35902.CPU{
-					Memory: &memory,
+					M: &memory,
 					R: LR35902.Registers{
 						A:  c.Initial.A,
 						F:  c.Initial.F,
