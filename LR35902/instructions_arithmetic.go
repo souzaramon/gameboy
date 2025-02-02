@@ -11,7 +11,7 @@ func ADD_A_r8(cpu *CPU, r2 string) {
 	cpu.R.SetZ((result & 0xFF) == 0)
 	cpu.R.SetN(false)
 	cpu.R.SetH((A&0xF)+(r8&0xF) >= 0x10)
-	cpu.R.SetC(uint16(A)+uint16(r8) >= 0xFF)
+	cpu.R.SetC(uint16(A)+uint16(r8) > 0xFF)
 }
 
 // (SUB A,r8): Subtract the value in r8 from A.
