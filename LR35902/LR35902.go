@@ -1,15 +1,16 @@
 package LR35902
 
+type MemoryLike interface {
+	Read8(address uint16) byte
+	Write8(address uint16, value byte)
+	Read16(address uint16) uint16
+	Write16(address uint16, value uint16)
+}
+
 type CPU struct {
 	Cycles int
 	R 		 Registers
-
-	Memory interface {
-		Read8(address uint16) byte
-		Write8(address uint16, value byte)
-		Read16(address uint16) uint16
-		Write16(address uint16, value uint16)
-	}
+	M      MemoryLike
 }
 
 func (cpu *CPU) ExecInstruction(opcode byte) {
@@ -141,7 +142,7 @@ func (cpu *CPU) ExecInstruction(opcode byte) {
 func (cpu *CPU) Step() int {
 	cpu.Cycles = 0
 
-	opcode := cpu.Memory.Read8(cpu.R.PC)
+	opcode := cpu.M.Read8(cpu.R.PC)
 	cpu.R.PC += 1
 
 	cpu.ExecInstruction(opcode)
