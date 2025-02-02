@@ -132,6 +132,8 @@ func (cpu *CPU) ADD_A_r8(r2 string) {
 	cpu.SetRegister8(R_A, result)
 }
 
+// SUB A,r8
+// Subtract the value in r8 from A.
 func (cpu *CPU) SUB_A_r8(r2 string) {
 	A := cpu.GetRegister8(R_A)
 	r8 := cpu.GetRegister8(r2)
@@ -144,4 +146,42 @@ func (cpu *CPU) SUB_A_r8(r2 string) {
 
 	cpu.SetFlags([4]int{z, 1, h, c})
 	cpu.SetRegister8(R_A, result)
+}
+
+// AND A,r8
+// Set A to the bitwise AND between the value in r8 and A.
+func (cpu *CPU) AND_A_r8(r2 string) {
+	result := cpu.GetRegister8(R_A) & cpu.GetRegister8(r2)
+	cpu.SetRegister8(R_A, result)
+	cpu.SetFlags([4]int{Bool2Int(result == 0), 0, 1, 0})
+}
+
+// OR A,r8
+// Set A to the bitwise OR between the value in r8 and A.
+func (cpu *CPU) OR_A_r8(r2 string) {
+	result := cpu.GetRegister8(R_A) | cpu.GetRegister8(r2)
+	cpu.SetRegister8(R_A, result)
+	cpu.SetFlags([4]int{Bool2Int(result == 0), 0, 0, 0})
+}
+
+// XOR A,r8
+// Set A to the bitwise XOR between the value in r8 and A.
+func (cpu *CPU) XOR_A_r8(r2 string) {
+	result := cpu.GetRegister8(R_A) ^ cpu.GetRegister8(r2)
+	cpu.SetRegister8(R_A, result)
+	cpu.SetFlags([4]int{Bool2Int(result == 0), 0, 0, 0})
+}
+
+// CP A,r8
+// ComPare the value in A with the value in r8.
+func (cpu *CPU) CP_A_r8(r2 string) {
+	A := cpu.GetRegister8(R_A)
+	r8 :=  cpu.GetRegister8(r2)
+	result := int(A) - int(r8)
+
+	z := Bool2Int(result == 0)
+	h := Bool2Int((int(A&0x0F) - int(r8&0x0f)) < 0)
+	c := Bool2Int(result < 0)
+
+	cpu.SetFlags([4]int{z, 1, h, c})
 }
