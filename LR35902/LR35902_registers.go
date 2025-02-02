@@ -18,6 +18,13 @@ const (
 	R_PC   = "R_PC"
 )
 
+const (
+	F_Z = 7
+	F_N = 6
+	F_H = 5
+	F_C = 4
+)
+
 type Registers struct {
 	A  byte
 	F  byte
@@ -31,20 +38,16 @@ type Registers struct {
 	SP uint16
 }
 
-func (r *Registers) SetZ(v bool) {
-	r.F = SetNthBit(r.F, 7, v)
+func (r *Registers) GetFlag(f int) bool {
+	return r.F&(byte(1)<<f) != 0
 }
 
-func (r *Registers) SetN(v bool) {
-	r.F = SetNthBit(r.F, 6, v)
-}
-
-func (r *Registers) SetH(v bool) {
-	r.F = SetNthBit(r.F, 5, v)
-}
-
-func (r *Registers) SetC(v bool) {
-	r.F = SetNthBit(r.F, 4, v)
+func (r *Registers) SetFlag(f int, v bool) {
+	if v {
+		r.F = r.F | (byte(1) << f)
+	} else {
+		r.F = r.F & ^(byte(1) << f)
+	}
 }
 
 func (r *Registers) GetByName8(reg string) byte {
