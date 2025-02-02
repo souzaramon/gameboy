@@ -7,8 +7,8 @@ import (
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
-	"github.com/souzaramon/LR35902"
-	test_utils "github.com/souzaramon/LR35902/tests"
+	"github.com/souzaramon/LR35902/LR35902"
+	test_utils "github.com/souzaramon/LR35902/LR35902_tests"
 )
 
 type CPUState struct {

@@ -137,13 +137,8 @@ func (cpu *CPU) SetRegister16(reg string, value uint16) {
 	}
 }
 
-func (cpu *CPU) Step() int {
-	cpu.Cycles = 0
-
-	currentOpcode := cpu.Memory.Read8(cpu.Registers.PC)
-	cpu.Registers.PC += 1
-
-	switch currentOpcode {
+func (cpu *CPU) ExecInstruction(opcode byte) {
+	switch opcode {
 		case 0x00, 0x40, 0x49, 0x52, 0x5b, 0x64, 0x6d, 0x7f: break
 		case 0x01: cpu.LD_r16_n16(R_BC)
 		case 0x02: cpu.LD_r16_A(R_BC)
@@ -266,6 +261,15 @@ func (cpu *CPU) Step() int {
 		case 0xbf: cpu.CP_A_r8(R_A)
 		case 0xf9: cpu.LD_SP_HL()
 	}
+}
+
+func (cpu *CPU) Step() int {
+	cpu.Cycles = 0
+
+	opcode := cpu.Memory.Read8(cpu.Registers.PC)
+	cpu.Registers.PC += 1
+
+	cpu.ExecInstruction(opcode)
 
 	return cpu.Cycles
 }
