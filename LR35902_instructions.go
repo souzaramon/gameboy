@@ -122,12 +122,26 @@ func (cpu *CPU) ADD_A_r8(r2 string) {
 	A := cpu.GetRegister8(R_A)
 	r8 := cpu.GetRegister8(r2)
 
-	sum := A + r8
+	result := A + r8
 
-	z := Bool2Int((sum & 0xFF) == 0)
+	z := Bool2Int((result & 0xFF) == 0)
 	h := Bool2Int((A&0xF)+(r8&0xF) >= 0x10)
 	c := Bool2Int(uint16(A) + uint16(r8) >= 0xFF)
 
 	cpu.SetFlags([4]int{z, 0, h, c})
-	cpu.SetRegister8(R_A, sum)
+	cpu.SetRegister8(R_A, result)
+}
+
+func (cpu *CPU) SUB_A_r8(r2 string) {
+	A := cpu.GetRegister8(R_A)
+	r8 := cpu.GetRegister8(r2)
+
+	result := A - r8
+
+	z := Bool2Int((result & 0xFF) == 0)
+	h := Bool2Int(int(A&0xF)-int(r8&0xF) < 0)
+	c := Bool2Int(int(A)-int(r8) < 0)
+
+	cpu.SetFlags([4]int{z, 1, h, c})
+	cpu.SetRegister8(R_A, result)
 }

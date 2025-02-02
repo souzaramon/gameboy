@@ -48,6 +48,9 @@ func TestSingleStepTests(t *testing.T) {
 
 		// ADD 
 		"80", "81", "82", "83", "84", "85", "87",
+
+		// SUB
+		"90", "91", "92", "93", "94", "95", "97",
 	}
 
 	for _, op_code := range op_codes {
