@@ -79,7 +79,7 @@ func TestSingleStepTests(t *testing.T) {
 
 				sut := LR35902.CPU{
 					Memory: &memory,
-					Registers: LR35902.Registers{
+					R: LR35902.Registers{
 						A:  c.Initial.A,
 						F:  c.Initial.F,
 						B:  c.Initial.B,
@@ -107,8 +107,8 @@ func TestSingleStepTests(t *testing.T) {
 
 				sut.Step()
 
-				if !cmp.Equal(sut.Registers, expect) {
-					t.Errorf("Expected \n\t%+v\n\n Got \n\t %+v", expect, sut.Registers)
+				if !cmp.Equal(sut.R, expect) {
+					t.Errorf("Expected \n\t%+v\n\n Got \n\t %+v", expect, sut.R)
 				}
 			})
 		}
