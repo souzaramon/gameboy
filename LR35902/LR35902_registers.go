@@ -1,28 +1,32 @@
 package LR35902
 
-const (
-	R_NONE = "NONE"
-	R_A    = "R_A"
-	R_F    = "R_F"
-	R_B    = "R_B"
-	R_C    = "R_C"
-	R_D    = "R_D"
-	R_E    = "R_E"
-	R_H    = "R_H"
-	R_L    = "R_L"
-	R_AF   = "R_AF"
-	R_BC   = "R_BC"
-	R_DE   = "R_DE"
-	R_HL   = "R_HL"
-	R_SP   = "R_SP"
-	R_PC   = "R_PC"
-)
+type RegisterName string
 
 const (
-	F_Z = 7
-	F_N = 6
-	F_H = 5
-	F_C = 4
+	R_NONE RegisterName = "NONE"
+	R_A    RegisterName = "R_A"
+	R_F    RegisterName = "R_F"
+	R_B    RegisterName = "R_B"
+	R_C    RegisterName = "R_C"
+	R_D    RegisterName = "R_D"
+	R_E    RegisterName = "R_E"
+	R_H    RegisterName = "R_H"
+	R_L    RegisterName = "R_L"
+	R_AF   RegisterName = "R_AF"
+	R_BC   RegisterName = "R_BC"
+	R_DE   RegisterName = "R_DE"
+	R_HL   RegisterName = "R_HL"
+	R_SP   RegisterName = "R_SP"
+	R_PC   RegisterName = "R_PC"
+)
+
+type Flag int
+
+const (
+	F_Z Flag = 7
+	F_N Flag = 6
+	F_H Flag = 5
+	F_C Flag = 4
 )
 
 type Registers struct {
@@ -38,19 +42,19 @@ type Registers struct {
 	SP uint16
 }
 
-func (r *Registers) GetFlag(f int) bool {
-	return r.F&(byte(1)<<f) != 0
+func (r *Registers) GetFlag(flag Flag) bool {
+	return r.F&(byte(1)<<flag) != 0
 }
 
-func (r *Registers) SetFlag(f int, v bool) {
+func (r *Registers) SetFlag(flag Flag, v bool) {
 	if v {
-		r.F = r.F | (byte(1) << f)
+		r.F = r.F | (byte(1) << flag)
 	} else {
-		r.F = r.F & ^(byte(1) << f)
+		r.F = r.F & ^(byte(1) << flag)
 	}
 }
 
-func (r *Registers) GetByName8(reg string) byte {
+func (r *Registers) GetByName8(reg RegisterName) byte {
 	switch reg {
 	case R_A:
 		return r.A
@@ -73,7 +77,7 @@ func (r *Registers) GetByName8(reg string) byte {
 	}
 }
 
-func (r *Registers) GetByName16(reg string) uint16 {
+func (r *Registers) GetByName16(reg RegisterName) uint16 {
 	switch reg {
 	case R_SP:
 		return r.SP
@@ -92,7 +96,7 @@ func (r *Registers) GetByName16(reg string) uint16 {
 	}
 }
 
-func (r *Registers) SetByName8(reg string, value byte) {
+func (r *Registers) SetByName8(reg RegisterName, value byte) {
 	switch reg {
 	case R_A:
 		r.A = uint8(value & 0xFF)
@@ -113,7 +117,7 @@ func (r *Registers) SetByName8(reg string, value byte) {
 	}
 }
 
-func (r *Registers) SetByName16(reg string, value uint16) {
+func (r *Registers) SetByName16(reg RegisterName, value uint16) {
 	switch reg {
 	case R_SP:
 		r.SP = value
