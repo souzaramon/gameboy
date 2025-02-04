@@ -16,6 +16,12 @@ func ADD_A_r8(cpu *CPU, r8 RegisterName) m_cycles {
 	return 0
 }
 
+// (ADD A,[HL]): TODO
+
+// (ADD A,n8):   TODO
+
+// (ADD HL,r16): TODO
+
 // (SUB A,r8): Subtract the value in r8 from A.
 func SUB_A_r8(cpu *CPU, r8 RegisterName) m_cycles {
 	A := cpu.R.GetByName8(R_A)
@@ -32,44 +38,9 @@ func SUB_A_r8(cpu *CPU, r8 RegisterName) m_cycles {
 	return 0
 }
 
-// (AND A,r8): Set A to the bitwise AND between the value in r8 and A.
-func AND_A_r8(cpu *CPU, r8 RegisterName) m_cycles {
-	result := cpu.R.GetByName8(R_A) & cpu.R.GetByName8(r8)
+// (SUB A,[HL]): TODO
 
-	cpu.R.SetByName8(R_A, result)
-	cpu.R.SetFlag(F_Z, result == 0)
-	cpu.R.SetFlag(F_N, false)
-	cpu.R.SetFlag(F_H, true)
-	cpu.R.SetFlag(F_C, false)
-
-	return 0
-}
-
-// (OR A,r8): Set A to the bitwise OR between the value in r8 and A.
-func OR_A_r8(cpu *CPU, r8 RegisterName) m_cycles {
-	result := cpu.R.GetByName8(R_A) | cpu.R.GetByName8(r8)
-
-	cpu.R.SetByName8(R_A, result)
-	cpu.R.SetFlag(F_Z, result == 0)
-	cpu.R.SetFlag(F_N, false)
-	cpu.R.SetFlag(F_H, false)
-	cpu.R.SetFlag(F_C, false)
-
-	return 0
-}
-
-// (XOR A,r8): Set A to the bitwise XOR between the value in r8 and A.
-func XOR_A_r8(cpu *CPU, r8 RegisterName) m_cycles {
-	result := cpu.R.GetByName8(R_A) ^ cpu.R.GetByName8(r8)
-
-	cpu.R.SetByName8(R_A, result)
-	cpu.R.SetFlag(F_Z, result == 0)
-	cpu.R.SetFlag(F_N, false)
-	cpu.R.SetFlag(F_H, false)
-	cpu.R.SetFlag(F_C, false)
-
-	return 0
-}
+// (SUB A,n8):   TODO
 
 // (CP A,r8): ComPare the value in A with the value in r8.
 func CP_A_r8(cpu *CPU, r8 RegisterName) m_cycles {
@@ -84,3 +55,31 @@ func CP_A_r8(cpu *CPU, r8 RegisterName) m_cycles {
 
 	return 0
 }
+
+// (CP A,[HL]):  TODO
+
+// (CP A,n8):    TODO
+
+// (ADC A,r8):   TODO
+
+// (ADC A,[HL]): TODO
+
+// (ADC A,n8):   TODO
+
+// (DEC r8):     TODO
+
+// (DEC [HL]):   TODO
+
+// (DEC r16):    TODO
+
+// (INC r8):     TODO
+
+// (INC [HL]):   TODO
+
+// (INC r16):    TODO
+
+// (SBC A,r8):   TODO
+
+// (SBC A,[HL]): TODO
+
+// (SBC A,n8):   TODO

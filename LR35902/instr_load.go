@@ -104,3 +104,15 @@ func LD_n16_SP(cpu *CPU) m_cycles {
 	cpu.R.PC += 2
 	return 2
 }
+
+// (LD [n16],A):  TODO
+
+// (LD A,[n16]):  TODO
+
+// (LDH [n16],A): TODO
+
+// (LDH [C],A):   TODO
+
+// (LDH A,[n16]): TODO
+
+// (LDH A,[C]):   TODO
