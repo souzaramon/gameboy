@@ -5,3 +5,7 @@ package LR35902
 // (NOP):  TODO
 
 // (STOP): TODO
+
+// (CCF):  TODO
+
+// (SCF):  TODO

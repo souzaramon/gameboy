@@ -116,3 +116,5 @@ func LD_n16_SP(cpu *CPU) m_cycles {
 // (LDH A,[n16]): TODO
 
 // (LDH A,[C]):   TODO
+
+// (LD HL,SP+e8): TODO

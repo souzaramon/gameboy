@@ -22,6 +22,10 @@ func ADD_A_r8(cpu *CPU, r8 RegisterName) m_cycles {
 
 // (ADD HL,r16): TODO
 
+// (ADD HL,SP):   TODO
+
+// (ADD SP,e8):   TODO
+
 // (SUB A,r8): Subtract the value in r8 from A.
 func SUB_A_r8(cpu *CPU, r8 RegisterName) m_cycles {
 	A := cpu.R.GetByName8(R_A)
@@ -66,6 +70,8 @@ func CP_A_r8(cpu *CPU, r8 RegisterName) m_cycles {
 
 // (ADC A,n8):   TODO
 
+// (DEC SP):      TODO
+
 // (DEC r8):     TODO
 
 // (DEC [HL]):   TODO
@@ -78,8 +84,18 @@ func CP_A_r8(cpu *CPU, r8 RegisterName) m_cycles {
 
 // (INC r16):    TODO
 
+// (INC SP):      TODO
+
 // (SBC A,r8):   TODO
 
 // (SBC A,[HL]): TODO
 
 // (SBC A,n8):   TODO
+
+// (POP AF):      TODO
+
+// (POP r16):     TODO
+
+// (PUSH AF):     TODO
+
+// (PUSH r16):    TODO
