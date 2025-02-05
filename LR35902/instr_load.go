@@ -105,9 +105,23 @@ func LD_n16_SP(cpu *CPU) m_cycles {
 	return 2
 }
 
-// (LD [n16],A):  TODO
+// (LD [n16],A): Copy the value in register A into the byte at address n16.
+func LD_n16_A(cpu *CPU) m_cycles {
+	addr := cpu.M.Read16(cpu.R.PC)
+	cpu.M.Write16(addr, cpu.R.GetByName16(R_A))
+	cpu.R.PC += 2
+	return 2
+}
 
-// (LD A,[n16]):  TODO
+// (LD A,[n16]): Copy the byte at address n16 into register A.
+func LD_A_n16(cpu *CPU) m_cycles {
+	addr := cpu.M.Read16(cpu.R.PC)
+	cpu.R.PC += 2
+	cpu.R.SetByName8(R_A, cpu.M.Read8(addr))
+	return 2
+}
+
+// (LD HL,SP+e8): TODO
 
 // (LDH [n16],A): TODO
 
@@ -116,5 +130,3 @@ func LD_n16_SP(cpu *CPU) m_cycles {
 // (LDH A,[n16]): TODO
 
 // (LDH A,[C]):   TODO
-
-// (LD HL,SP+e8): TODO
