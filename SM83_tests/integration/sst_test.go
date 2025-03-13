@@ -45,8 +45,7 @@ func TestSingleStepTests(t *testing.T) {
 		"50", "51", "52", "53", "54", "55", "56", "57", "58", "59", "5a", "5c", "5b", "5d", "5e", "5f",
 		"60", "61", "62", "63", "64", "65", "66", "67", "68", "69", "6a", "6b", "6c", "6d", "6e", "6f",
 		"70", "71", "72", "73", "74", "75", "77", "78", "79", "7a", "7b", "7c", "7d", "7e", "7f",
-		"ea", "fa",
-		"f9",
+		"ea", "f8", "f9", "fa",
 
 		// ADD
 		"80", "81", "82", "83", "84", "85", "87",
@@ -111,7 +110,7 @@ func TestSingleStepTests(t *testing.T) {
 				sut.Step()
 
 				if !cmp.Equal(sut.R, expect) {
-					t.Errorf("Expected \n\t%+v\n\n Got \n\t %+v", expect, sut.R)
+					t.Errorf("\nCase\n\t%+v\nExpected\n\t%+v\nGot\n\t%+v", c.Initial, expect, sut.R)
 				}
 			})
 		}
