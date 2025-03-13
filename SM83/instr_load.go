@@ -42,7 +42,7 @@ func LD_HL_n8(cpu *CPU) m_cycles {
 
 // (LD SP,n16): Copy the value n16 into register SP.
 func LD_SP_n16(cpu *CPU) m_cycles {
-	cpu.R.SetByName16(R_SP, cpu.M.Read16(cpu.R.PC))
+	cpu.R.SP = cpu.M.Read16(cpu.R.PC)
 	cpu.R.PC += 2
 	return 2
 }
@@ -93,14 +93,14 @@ func LD_A_HLD(cpu *CPU) m_cycles {
 
 // (LD SP,HL): Copy register HL into register SP.
 func LD_SP_HL(cpu *CPU) m_cycles {
-	cpu.R.SetByName16(R_SP, cpu.R.GetByName16(R_HL))
+	cpu.R.SP = cpu.R.GetByName16(R_HL)
 	return 0
 }
 
 // (LD [n16],SP): Copy SP & $FF at address n16 and SP >> 8 at address n16 + 1.
 func LD_n16_SP(cpu *CPU) m_cycles {
 	addr := cpu.M.Read16(cpu.R.PC)
-	cpu.M.Write16(addr, cpu.R.GetByName16(R_SP))
+	cpu.M.Write16(addr, cpu.R.SP)
 	cpu.R.PC += 2
 	return 2
 }

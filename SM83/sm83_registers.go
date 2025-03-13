@@ -16,8 +16,6 @@ const (
 	R_BC   RegisterName = "R_BC"
 	R_DE   RegisterName = "R_DE"
 	R_HL   RegisterName = "R_HL"
-	R_SP   RegisterName = "R_SP"
-	R_PC   RegisterName = "R_PC"
 )
 
 type Flag int
@@ -30,6 +28,8 @@ const (
 )
 
 type Registers struct {
+	PC uint16
+	SP uint16
 	A  byte
 	F  byte
 	B  byte
@@ -38,8 +38,6 @@ type Registers struct {
 	E  byte
 	H  byte
 	L  byte
-	PC uint16
-	SP uint16
 }
 
 func (r *Registers) GetFlag(flag Flag) bool {
@@ -79,10 +77,6 @@ func (r *Registers) GetByName8(reg RegisterName) byte {
 
 func (r *Registers) GetByName16(reg RegisterName) uint16 {
 	switch reg {
-	case R_SP:
-		return r.SP
-	case R_PC:
-		return r.PC
 	case R_AF:
 		return (uint16(r.A) << 8) | uint16(r.F)
 	case R_BC:
@@ -119,10 +113,6 @@ func (r *Registers) SetByName8(reg RegisterName, value byte) {
 
 func (r *Registers) SetByName16(reg RegisterName, value uint16) {
 	switch reg {
-	case R_SP:
-		r.SP = value
-	case R_PC:
-		r.PC = value
 	case R_AF:
 		r.A = uint8(value >> 8)
 		r.F = uint8(value)
