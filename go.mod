@@ -1,4 +1,4 @@
-module github.com/souzaramon/LR35902
+module github.com/souzaramon/SM83
 
 go 1.22.5
 

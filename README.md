@@ -1,6 +1,6 @@
-## LR35902
+## SM83
 
-Go package implementing LR35902 CPU (aka. Gameboy's CPU)
+Go package implementing SM83 Instruction Set (aka. Gameboy's CPU)
 
 ### References
 

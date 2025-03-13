@@ -1,4 +1,4 @@
-package LR35902
+package SM83
 
 type m_cycles int
 type t_cycles int

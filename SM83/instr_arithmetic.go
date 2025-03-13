@@ -1,4 +1,4 @@
-package LR35902
+package SM83
 
 // (ADD A,r8): Add the value in r8 to A.
 func ADD_A_r8(cpu *CPU, r8 RegisterName) m_cycles {

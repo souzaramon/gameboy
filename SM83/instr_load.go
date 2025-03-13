@@ -1,4 +1,4 @@
-package LR35902
+package SM83
 
 // (LD r8,r8): Copy (aka Load) the value in register on the right into the register on the left.
 func LD_r8_r8(cpu *CPU, r8_1 RegisterName, r8_2 RegisterName) m_cycles {

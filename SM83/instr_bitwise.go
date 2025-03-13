@@ -1,4 +1,4 @@
-package LR35902
+package SM83
 
 // (AND A,r8): Set A to the bitwise AND between the value in r8 and A.
 func AND_A_r8(cpu *CPU, r8 RegisterName) m_cycles {
