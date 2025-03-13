@@ -260,6 +260,8 @@ func (cpu *CPU) ExecInstruction(opcode byte) m_cycles {
 		return CP_A_r8(cpu, R_A)
 	case 0xea:
 		return LD_n16_A(cpu)
+	case 0xf8:
+		return LD_HL_SP_E8(cpu)
 	case 0xf9:
 		return LD_SP_HL(cpu)
 	case 0xfa:

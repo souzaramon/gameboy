@@ -121,7 +121,20 @@ func LD_A_n16(cpu *CPU) m_cycles {
 	return 2
 }
 
-// (LD HL,SP+e8): TODO
+// (LD HL,SP+e8): Add the signed value e8 to SP and copy the result in HL.
+func LD_HL_SP_E8(cpu *CPU) m_cycles {
+	r8_val := int8(cpu.M.Read8(cpu.R.PC))
+	cpu.R.PC += 1
+
+	cpu.R.SetByName16(R_HL, uint16(int(cpu.R.SP)+int(r8_val)))
+
+	cpu.R.SetFlag(F_Z, false)
+	cpu.R.SetFlag(F_N, false)
+	cpu.R.SetFlag(F_H, ((cpu.R.SP&0xF)+(uint16(r8_val)&0xF)) > 0xF)
+	cpu.R.SetFlag(F_C, ((cpu.R.SP&0xFF)+(uint16(r8_val)&0xFF)) > 0xFF)
+
+	return 3
+}
 
 // (LDH [n16],A): TODO
 
