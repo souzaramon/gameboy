@@ -5,7 +5,7 @@
   "author": "souzaramon",
   "license": "MIT",
   "scripts": {
-    "test": "vitest --run"
+    "test:integration": "vitest --run"
   },
   "devDependencies": {
     "@types/node": "^24.1.0",

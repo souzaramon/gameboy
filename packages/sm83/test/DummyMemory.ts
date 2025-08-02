@@ -1,4 +1,4 @@
-import { MemoryLike } from "../src/cpu";
+import { MemoryLike } from "../src/CPU";
 
 export class DummyMemory implements MemoryLike {
   public data: Uint8Array;
