@@ -1,4 +1,4 @@
-import * as instr from "./instructions/mod";
+import * as instr from "./instr";
 
 export type MCycles = number;
 
@@ -294,8 +294,90 @@ export class CPU {
         return instr.LD_r8_r8(this, R8.A, R8.L);
       case 0x7e:
         return instr.LD_r8_HL(this, R8.A);
-      case 0x79:
-        return instr.LD_r8_r8(this, R8.A, R8.C);
+      case 0x80:
+        return instr.ADD_A_r8(this, R8.B);
+      case 0x81:
+        return instr.ADD_A_r8(this, R8.C);
+      case 0x82:
+        return instr.ADD_A_r8(this, R8.D);
+      case 0x83:
+        return instr.ADD_A_r8(this, R8.E);
+      case 0x84:
+        return instr.ADD_A_r8(this, R8.H);
+      case 0x85:
+        return instr.ADD_A_r8(this, R8.L);
+      case 0x87:
+        return instr.ADD_A_r8(this, R8.A);
+      case 0x90:
+        return instr.SUB_A_r8(this, R8.B);
+      case 0x91:
+        return instr.SUB_A_r8(this, R8.C);
+      case 0x92:
+        return instr.SUB_A_r8(this, R8.D);
+      case 0x93:
+        return instr.SUB_A_r8(this, R8.E);
+      case 0x94:
+        return instr.SUB_A_r8(this, R8.H);
+      case 0x95:
+        return instr.SUB_A_r8(this, R8.L);
+      case 0x97:
+        return instr.SUB_A_r8(this, R8.A);
+      case 0xa0:
+        return instr.AND_A_r8(this, R8.B);
+      case 0xa1:
+        return instr.AND_A_r8(this, R8.C);
+      case 0xa2:
+        return instr.AND_A_r8(this, R8.D);
+      case 0xa3:
+        return instr.AND_A_r8(this, R8.E);
+      case 0xa4:
+        return instr.AND_A_r8(this, R8.H);
+      case 0xa5:
+        return instr.AND_A_r8(this, R8.L);
+      case 0xa7:
+        return instr.AND_A_r8(this, R8.A);
+      case 0xa8:
+        return instr.XOR_A_r8(this, R8.B);
+      case 0xa9:
+        return instr.XOR_A_r8(this, R8.C);
+      case 0xaa:
+        return instr.XOR_A_r8(this, R8.D);
+      case 0xab:
+        return instr.XOR_A_r8(this, R8.E);
+      case 0xac:
+        return instr.XOR_A_r8(this, R8.H);
+      case 0xad:
+        return instr.XOR_A_r8(this, R8.L);
+      case 0xaf:
+        return instr.XOR_A_r8(this, R8.A);
+      case 0xb0:
+        return instr.OR_A_r8(this, R8.B);
+      case 0xb1:
+        return instr.OR_A_r8(this, R8.C);
+      case 0xb2:
+        return instr.OR_A_r8(this, R8.D);
+      case 0xb3:
+        return instr.OR_A_r8(this, R8.E);
+      case 0xb4:
+        return instr.OR_A_r8(this, R8.H);
+      case 0xb5:
+        return instr.OR_A_r8(this, R8.L);
+      case 0xb7:
+        return instr.OR_A_r8(this, R8.A);
+      case 0xb8:
+        return instr.CP_A_r8(this, R8.B);
+      case 0xb9:
+        return instr.CP_A_r8(this, R8.C);
+      case 0xba:
+        return instr.CP_A_r8(this, R8.D);
+      case 0xbb:
+        return instr.CP_A_r8(this, R8.E);
+      case 0xbc:
+        return instr.CP_A_r8(this, R8.H);
+      case 0xbd:
+        return instr.CP_A_r8(this, R8.L);
+      case 0xbf:
+        return instr.CP_A_r8(this, R8.A);
       case 0xea:
         return instr.LD_n16_A(this);
       case 0xf8:
