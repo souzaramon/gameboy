@@ -1,0 +1,14 @@
+{
+  "name": "@gameboy/sm83",
+  "version": "1.0.0",
+  "description": "SM83 Instruction set",
+  "author": "souzaramon",
+  "license": "MIT",
+  "scripts": {
+    "test": "vitest --run"
+  },
+  "devDependencies": {
+    "@types/node": "^24.1.0",
+    "vitest": "^3.2.4"
+  }
+}
