@@ -1,6 +1,6 @@
 ## SM83
 
-Go package implementing SM83 Instruction Set (aka. Gameboy's CPU)
+SM83 Instruction set
 
 ### References
 
