@@ -16,7 +16,21 @@ export function ADD_A_r8(cpu: CPU, r8: R8): MCycles {
   return 0;
 }
 
-// (ADD A,[HL]): TODO
+// (ADD A,[HL]): Add the byte pointed to by HL to A.
+export function ADD_A_HL(cpu: CPU): MCycles {
+  const A = cpu.getR(R8.A);
+  const r8Val = cpu.memory.read8(cpu.getR(R16.HL));
+  const result = (A + r8Val) & 0xff;
+
+  cpu.setR(R8.A, result);
+
+  cpu.setF(F.Z, result === 0);
+  cpu.setF(F.N, false);
+  cpu.setF(F.H, (A & 0xf) + (r8Val & 0xf) > 0xf);
+  cpu.setF(F.C, A + r8Val > 0xff);
+
+  return 2;
+}
 
 // (ADD A,n8):   TODO
 
@@ -42,7 +56,21 @@ export function SUB_A_r8(cpu: CPU, r8: R8): MCycles {
   return 0;
 }
 
-// (SUB A,[HL]): TODO
+// (SUB A,[HL]): Subtract the byte pointed to by HL from A.
+export function SUB_A_HL(cpu: CPU): MCycles {
+  const A = cpu.getR(R8.A);
+  const r8Val = cpu.memory.read8(cpu.getR(R16.HL));
+  const result = (A - r8Val) & 0xff;
+
+  cpu.setR(R8.A, result);
+
+  cpu.setF(F.Z, result === 0);
+  cpu.setF(F.N, true);
+  cpu.setF(F.H, (A & 0xf) < (r8Val & 0xf));
+  cpu.setF(F.C, A < r8Val);
+
+  return 2;
+}
 
 // (SUB A,n8):   TODO
 
@@ -60,7 +88,19 @@ export function CP_A_r8(cpu: CPU, r8: R8): MCycles {
   return 0;
 }
 
-// (CP A,[HL]):  TODO
+// (CP A,[HL]): ComPare the value in A with the byte pointed to by HL.
+export function CP_A_HL(cpu: CPU): MCycles {
+  const A = cpu.getR(R8.A);
+  const r8Val = cpu.memory.read8(cpu.getR(R16.HL));
+  const result = A - r8Val;
+
+  cpu.setF(F.Z, (result & 0xff) === 0);
+  cpu.setF(F.N, true);
+  cpu.setF(F.H, (A & 0x0f) < (r8Val & 0x0f));
+  cpu.setF(F.C, A < r8Val);
+
+  return 2;
+}
 
 // (CP A,n8):    TODO
 

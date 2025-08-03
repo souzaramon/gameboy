@@ -14,7 +14,19 @@ export function AND_A_r8(cpu: CPU, r8: R8): MCycles {
   return 0;
 }
 
-// (AND A,[HL]):    TODO
+// (AND A,[HL]): Set A to the bitwise AND between the byte pointed to by HL and A.
+export function AND_A_HL(cpu: CPU): MCycles {
+  const result = cpu.getR(R8.A) & cpu.memory.read8(cpu.getR(R16.HL));
+
+  cpu.setR(R8.A, result);
+
+  cpu.setF(F.Z, result === 0);
+  cpu.setF(F.N, false);
+  cpu.setF(F.H, true);
+  cpu.setF(F.C, false);
+
+  return 2;
+}
 
 // (AND A,n8):      TODO
 
@@ -32,7 +44,19 @@ export function OR_A_r8(cpu: CPU, r8: R8): MCycles {
   return 0;
 }
 
-// (OR A,[HL]):     TODO
+// (OR A,[HL]): Set A to the bitwise OR between the byte pointed to by HL and A.
+export function OR_A_HL(cpu: CPU): MCycles {
+  const result = cpu.getR(R8.A) | cpu.memory.read8(cpu.getR(R16.HL));
+
+  cpu.setR(R8.A, result);
+
+  cpu.setF(F.Z, result === 0);
+  cpu.setF(F.N, false);
+  cpu.setF(F.H, false);
+  cpu.setF(F.C, false);
+
+  return 2;
+}
 
 // (OR A,n8):       TODO
 

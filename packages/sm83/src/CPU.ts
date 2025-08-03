@@ -306,6 +306,8 @@ export class CPU {
         return instr.ADD_A_r8(this, R8.H);
       case 0x85:
         return instr.ADD_A_r8(this, R8.L);
+      case 0x86:
+        return instr.ADD_A_HL(this);
       case 0x87:
         return instr.ADD_A_r8(this, R8.A);
       case 0x90:
@@ -320,6 +322,8 @@ export class CPU {
         return instr.SUB_A_r8(this, R8.H);
       case 0x95:
         return instr.SUB_A_r8(this, R8.L);
+      case 0x96:
+        return instr.SUB_A_HL(this);
       case 0x97:
         return instr.SUB_A_r8(this, R8.A);
       case 0xa0:
@@ -334,6 +338,8 @@ export class CPU {
         return instr.AND_A_r8(this, R8.H);
       case 0xa5:
         return instr.AND_A_r8(this, R8.L);
+      case 0xa6:
+        return instr.AND_A_HL(this);
       case 0xa7:
         return instr.AND_A_r8(this, R8.A);
       case 0xa8:
@@ -362,6 +368,8 @@ export class CPU {
         return instr.OR_A_r8(this, R8.H);
       case 0xb5:
         return instr.OR_A_r8(this, R8.L);
+      case 0xb6:
+        return instr.OR_A_HL(this);
       case 0xb7:
         return instr.OR_A_r8(this, R8.A);
       case 0xb8:
@@ -376,6 +384,8 @@ export class CPU {
         return instr.CP_A_r8(this, R8.H);
       case 0xbd:
         return instr.CP_A_r8(this, R8.L);
+      case 0xbe:
+        return instr.CP_A_HL(this);
       case 0xbf:
         return instr.CP_A_r8(this, R8.A);
       case 0xea:
