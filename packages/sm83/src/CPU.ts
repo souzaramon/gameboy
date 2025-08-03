@@ -388,6 +388,8 @@ export class CPU {
         return instr.CP_A_HL(this);
       case 0xbf:
         return instr.CP_A_r8(this, R8.A);
+      case 0xc6:
+        return instr.ADD_A_n8(this);
       case 0xea:
         return instr.LD_n16_A(this);
       case 0xf8:

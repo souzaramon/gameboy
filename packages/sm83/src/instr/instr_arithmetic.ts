@@ -3,15 +3,14 @@ import { CPU, R8, R16, F, MCycles } from "../CPU";
 // (ADD A,r8): Add the value in r8 to A.
 export function ADD_A_r8(cpu: CPU, r8: R8): MCycles {
   const A = cpu.getR(R8.A);
-  const r8Val = cpu.getR(r8);
-  const result = (A + r8Val) & 0xff;
+  const val = cpu.getR(r8);
+  const result = (A + val) & 0xff;
 
   cpu.setR(R8.A, result);
-
   cpu.setF(F.Z, result === 0);
   cpu.setF(F.N, false);
-  cpu.setF(F.H, (A & 0xf) + (r8Val & 0xf) > 0xf);
-  cpu.setF(F.C, A + r8Val > 0xff);
+  cpu.setF(F.H, (A & 0xf) + (val & 0xf) > 0xf);
+  cpu.setF(F.C, A + val > 0xff);
 
   return 0;
 }
@@ -19,20 +18,33 @@ export function ADD_A_r8(cpu: CPU, r8: R8): MCycles {
 // (ADD A,[HL]): Add the byte pointed to by HL to A.
 export function ADD_A_HL(cpu: CPU): MCycles {
   const A = cpu.getR(R8.A);
-  const r8Val = cpu.memory.read8(cpu.getR(R16.HL));
-  const result = (A + r8Val) & 0xff;
+  const val = cpu.memory.read8(cpu.getR(R16.HL));
+  const result = (A + val) & 0xff;
 
   cpu.setR(R8.A, result);
-
   cpu.setF(F.Z, result === 0);
   cpu.setF(F.N, false);
-  cpu.setF(F.H, (A & 0xf) + (r8Val & 0xf) > 0xf);
-  cpu.setF(F.C, A + r8Val > 0xff);
+  cpu.setF(F.H, (A & 0xf) + (val & 0xf) > 0xf);
+  cpu.setF(F.C, A + val > 0xff);
 
   return 2;
 }
 
-// (ADD A,n8):   TODO
+// (ADD A,n8): Add the value n8 to A.
+export function ADD_A_n8(cpu: CPU): MCycles {
+  const A = cpu.getR(R8.A);
+  const val = cpu.memory.read8(cpu.getR(R16.PC));
+  const result = (A + val) & 0xff;
+
+  cpu.setR(R16.PC, cpu.getR(R16.PC) + 1);
+  cpu.setR(R8.A, result);
+  cpu.setF(F.Z, result === 0);
+  cpu.setF(F.N, false);
+  cpu.setF(F.H, (A & 0xf) + (val & 0xf) > 0xf);
+  cpu.setF(F.C, A + val > 0xff);
+
+  return 0;
+}
 
 // (ADD HL,r16): TODO
 
@@ -43,15 +55,14 @@ export function ADD_A_HL(cpu: CPU): MCycles {
 // (SUB A,r8): Subtract the value in r8 from A.
 export function SUB_A_r8(cpu: CPU, r8: R8): MCycles {
   const A = cpu.getR(R8.A);
-  const r8Val = cpu.getR(r8);
-  const result = (A - r8Val) & 0xff;
+  const val = cpu.getR(r8);
+  const result = (A - val) & 0xff;
 
   cpu.setR(R8.A, result);
-
   cpu.setF(F.Z, result === 0);
   cpu.setF(F.N, true);
-  cpu.setF(F.H, (A & 0xf) < (r8Val & 0xf));
-  cpu.setF(F.C, A < r8Val);
+  cpu.setF(F.H, (A & 0xf) < (val & 0xf));
+  cpu.setF(F.C, A < val);
 
   return 0;
 }
@@ -59,15 +70,14 @@ export function SUB_A_r8(cpu: CPU, r8: R8): MCycles {
 // (SUB A,[HL]): Subtract the byte pointed to by HL from A.
 export function SUB_A_HL(cpu: CPU): MCycles {
   const A = cpu.getR(R8.A);
-  const r8Val = cpu.memory.read8(cpu.getR(R16.HL));
-  const result = (A - r8Val) & 0xff;
+  const val = cpu.memory.read8(cpu.getR(R16.HL));
+  const result = (A - val) & 0xff;
 
   cpu.setR(R8.A, result);
-
   cpu.setF(F.Z, result === 0);
   cpu.setF(F.N, true);
-  cpu.setF(F.H, (A & 0xf) < (r8Val & 0xf));
-  cpu.setF(F.C, A < r8Val);
+  cpu.setF(F.H, (A & 0xf) < (val & 0xf));
+  cpu.setF(F.C, A < val);
 
   return 2;
 }
@@ -77,13 +87,13 @@ export function SUB_A_HL(cpu: CPU): MCycles {
 // (CP A, r8): ComPare the value in A with the value in r8.
 export function CP_A_r8(cpu: CPU, r8: R8): MCycles {
   const A = cpu.getR(R8.A);
-  const r8Val = cpu.getR(r8);
-  const result = A - r8Val;
+  const val = cpu.getR(r8);
+  const result = A - val;
 
   cpu.setF(F.Z, (result & 0xff) === 0);
   cpu.setF(F.N, true);
-  cpu.setF(F.H, (A & 0x0f) < (r8Val & 0x0f));
-  cpu.setF(F.C, A < r8Val);
+  cpu.setF(F.H, (A & 0x0f) < (val & 0x0f));
+  cpu.setF(F.C, A < val);
 
   return 0;
 }
@@ -91,13 +101,13 @@ export function CP_A_r8(cpu: CPU, r8: R8): MCycles {
 // (CP A,[HL]): ComPare the value in A with the byte pointed to by HL.
 export function CP_A_HL(cpu: CPU): MCycles {
   const A = cpu.getR(R8.A);
-  const r8Val = cpu.memory.read8(cpu.getR(R16.HL));
-  const result = A - r8Val;
+  const val = cpu.memory.read8(cpu.getR(R16.HL));
+  const result = A - val;
 
   cpu.setF(F.Z, (result & 0xff) === 0);
   cpu.setF(F.N, true);
-  cpu.setF(F.H, (A & 0x0f) < (r8Val & 0x0f));
-  cpu.setF(F.C, A < r8Val);
+  cpu.setF(F.H, (A & 0x0f) < (val & 0x0f));
+  cpu.setF(F.C, A < val);
 
   return 2;
 }
