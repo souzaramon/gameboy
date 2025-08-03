@@ -1,5 +1,5 @@
 import * as instr from "./instr";
-import { MCycles, TCycles, MemoryLike, R8, R16, F } from "./types";
+import { MCycles, TCycles, MemoryLike, R8, R16, F } from "./CPU.types";
 
 export class CPU {
   private currentOpcode: number;
