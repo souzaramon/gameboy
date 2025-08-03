@@ -1,4 +1,5 @@
-import { CPU, R8, R16, F, MCycles } from "../CPU";
+import { CPU } from "../CPU_";
+import { R8, R16, F, MCycles } from "../types";
 
 // (AND A, r8): Set A to the bitwise AND between the value in r8 and A.
 export function AND_A_r8(cpu: CPU, r8: R8): MCycles {

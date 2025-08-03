@@ -50,7 +50,8 @@ describe("SM83 - SST", () => {
   const cpu = new CPU(new DummyMemory(99999), 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
   
   for (const opCode of opCodes) {
-    const file = fs.readFileSync(path.join(__dirname, "sst_sm83", "v1", `${opCode}.json`), "utf-8");
+    const fileName = path.join(__dirname, "sst_sm83", "v1", `${opCode}.json`);
+    const file = fs.readFileSync(fileName, "utf-8");
     const sstCases = JSON.parse(file) as SM83Case[];
 
     for (const sstCase of sstCases) {

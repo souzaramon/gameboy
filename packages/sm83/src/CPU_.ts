@@ -1,45 +1,8 @@
 import * as instr from "./instr";
-
-export type MCycles = number;
-
-export type TCycles = number;
-
-export const enum R8 {
-  A = "A",
-  F = "F",
-  B = "B",
-  C = "C",
-  D = "D",
-  E = "E",
-  H = "H",
-  L = "L",
-}
-
-export const enum R16 {
-  AF = "AF",
-  BC = "BC",
-  DE = "DE",
-  HL = "HL",
-  PC = "PC",
-  SP = "SP",
-}
-
-export const enum F {
-  Z = 7,
-  N = 6,
-  H = 5,
-  C = 4,
-}
-
-export interface MemoryLike {
-  read8(address: number): number;
-  write8(address: number, value: number): void;
-  read16(address: number): number;
-  write16(address: number, value: number): void;
-}
+import { MCycles, TCycles, MemoryLike, R8, R16, F } from "./types";
 
 export class CPU {
-  private currentInstruction: number;
+  private currentOpcode: number;
 
   constructor(
     public memory: MemoryLike,
@@ -54,6 +17,21 @@ export class CPU {
     public H: number,
     public L: number
   ) {}
+
+  step = (): TCycles => {
+    this.currentOpcode = this.memory.read8(this.PC);
+    this.setR(R16.PC, this.getR(R16.PC) + 1);
+
+    switch (this.currentOpcode) {
+      case 0xcb:
+        this.currentOpcode = this.memory.read8(this.PC);
+        this.setR(R16.PC, this.getR(R16.PC) + 1);
+
+        return this.execPInstruction(this.currentOpcode) * 4;
+      default:
+        return this.execInstruction(this.currentOpcode) * 4;
+    }
+  };
 
   getF = (position: F) => {
     return (this.F & (1 << position)) !== 0;
@@ -139,7 +117,7 @@ export class CPU {
       case 0x64:
       case 0x6d:
       case 0x7f:
-        return 0;
+        return instr.NOP();
       case 0x01:
         return instr.LD_r16_n16(this, R16.BC);
       case 0x02:
@@ -419,17 +397,6 @@ export class CPU {
     switch (opcode) {
       default:
         return 0;
-    }
-  };
-
-  step = (): TCycles => {
-    this.currentInstruction = this.memory.read8(this.PC);
-    this.setR(R16.PC, this.getR(R16.PC) + 1);
-
-    switch (this.currentInstruction) {
-      default:
-        const mCycles = this.execInstruction(this.currentInstruction);
-        return mCycles * 4;
     }
   };
 }

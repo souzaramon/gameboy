@@ -1,4 +1,5 @@
-import { CPU, R8, R16, F, MCycles } from "../CPU";
+import { CPU } from "../CPU_";
+import { R8, R16, F, MCycles } from "../types";
 
 // (ADD A,r8): Add the value in r8 to A.
 export function ADD_A_r8(cpu: CPU, r8: R8): MCycles {

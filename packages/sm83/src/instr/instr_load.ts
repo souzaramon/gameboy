@@ -1,4 +1,5 @@
-import { CPU, R8, R16, F, MCycles } from "../CPU";
+import { CPU } from "../CPU_";
+import { MCycles, R8, R16, F } from "../types";
 
 // NOTE: (LD r8,r8): Copy the value in register on the right into the register on the left.
 export function LD_r8_r8(cpu: CPU, r8_1: R8, r8_2: R8): MCycles {
