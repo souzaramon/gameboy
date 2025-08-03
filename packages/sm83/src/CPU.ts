@@ -354,6 +354,8 @@ export class CPU {
         return instr.XOR_A_r8(this, R8.H);
       case 0xad:
         return instr.XOR_A_r8(this, R8.L);
+      case 0xae:
+        return instr.XOR_A_HL(this);
       case 0xaf:
         return instr.XOR_A_r8(this, R8.A);
       case 0xb0:
@@ -392,8 +394,14 @@ export class CPU {
         return instr.ADD_A_n8(this);
       case 0xd6:
         return instr.SUB_A_n8(this);
+      case 0xe6:
+        return instr.AND_A_n8(this);
       case 0xea:
         return instr.LD_n16_A(this);
+      case 0xee:
+        return instr.XOR_A_n8(this);
+      case 0xf6:
+        return instr.OR_A_n8(this);
       case 0xf8:
         return instr.LD_HL_SP_E8(this);
       case 0xf9:

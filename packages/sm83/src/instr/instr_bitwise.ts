@@ -5,7 +5,6 @@ export function AND_A_r8(cpu: CPU, r8: R8): MCycles {
   const result = cpu.getR(R8.A) & cpu.getR(r8);
 
   cpu.setR(R8.A, result);
-
   cpu.setF(F.Z, result === 0);
   cpu.setF(F.N, false);
   cpu.setF(F.H, true);
@@ -28,14 +27,25 @@ export function AND_A_HL(cpu: CPU): MCycles {
   return 2;
 }
 
-// (AND A,n8):      TODO
+// (AND A,n8): Set A to the bitwise AND between the value n8 and A.
+export function AND_A_n8(cpu: CPU): MCycles {
+  const result = cpu.getR(R8.A) & cpu.memory.read8(cpu.getR(R16.PC));
+
+  cpu.setR(R16.PC, cpu.getR(R16.PC) + 1);
+  cpu.setR(R8.A, result);
+  cpu.setF(F.Z, result === 0);
+  cpu.setF(F.N, false);
+  cpu.setF(F.H, true);
+  cpu.setF(F.C, false);
+
+  return 2;
+}
 
 // (OR A, r8): Set A to the bitwise OR between the value in r8 and A.
 export function OR_A_r8(cpu: CPU, r8: R8): MCycles {
   const result = cpu.getR(R8.A) | cpu.getR(r8);
 
   cpu.setR(R8.A, result);
-
   cpu.setF(F.Z, result === 0);
   cpu.setF(F.N, false);
   cpu.setF(F.H, false);
@@ -49,7 +59,6 @@ export function OR_A_HL(cpu: CPU): MCycles {
   const result = cpu.getR(R8.A) | cpu.memory.read8(cpu.getR(R16.HL));
 
   cpu.setR(R8.A, result);
-
   cpu.setF(F.Z, result === 0);
   cpu.setF(F.N, false);
   cpu.setF(F.H, false);
@@ -58,14 +67,25 @@ export function OR_A_HL(cpu: CPU): MCycles {
   return 2;
 }
 
-// (OR A,n8):       TODO
+// (OR A,n8): Set A to the bitwise OR between the value n8 and A.
+export function OR_A_n8(cpu: CPU): MCycles {
+  const result = cpu.getR(R8.A) | cpu.memory.read8(cpu.getR(R16.PC));
+
+  cpu.setR(R16.PC, cpu.getR(R16.PC) + 1);
+  cpu.setR(R8.A, result);
+  cpu.setF(F.Z, result === 0);
+  cpu.setF(F.N, false);
+  cpu.setF(F.H, false);
+  cpu.setF(F.C, false);
+
+  return 2;
+}
 
 // (XOR A, r8): Set A to the bitwise XOR between the value in r8 and A.
 export function XOR_A_r8(cpu: CPU, r8: R8): MCycles {
   const result = cpu.getR(R8.A) ^ cpu.getR(r8);
 
   cpu.setR(R8.A, result);
-
   cpu.setF(F.Z, result === 0);
   cpu.setF(F.N, false);
   cpu.setF(F.H, false);
@@ -74,9 +94,32 @@ export function XOR_A_r8(cpu: CPU, r8: R8): MCycles {
   return 0;
 }
 
-// (XOR A,[HL]):    TODO
+// (XOR A,[HL]): Set A to the bitwise XOR between the byte pointed to by HL and A.
+export function XOR_A_HL(cpu: CPU): MCycles {
+  const result = cpu.getR(R8.A) ^ cpu.memory.read8(cpu.getR(R16.HL));
 
-// (XOR A,n8):      TODO
+  cpu.setR(R8.A, result);
+  cpu.setF(F.Z, result === 0);
+  cpu.setF(F.N, false);
+  cpu.setF(F.H, false);
+  cpu.setF(F.C, false);
+
+  return 2;
+}
+
+// (XOR A,n8): Set A to the bitwise XOR between the value n8 and A.
+export function XOR_A_n8(cpu: CPU): MCycles {
+  const result = cpu.getR(R8.A) ^ cpu.memory.read8(cpu.getR(R16.PC));
+
+  cpu.setR(R16.PC, cpu.getR(R16.PC) + 1);
+  cpu.setR(R8.A, result);
+  cpu.setF(F.Z, result === 0);
+  cpu.setF(F.N, false);
+  cpu.setF(F.H, false);
+  cpu.setF(F.C, false);
+
+  return 2;
+}
 
 // (CPL):           TODO
 
