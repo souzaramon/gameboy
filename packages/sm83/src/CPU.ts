@@ -390,6 +390,8 @@ export class CPU {
         return instr.CP_A_r8(this, R8.A);
       case 0xc6:
         return instr.ADD_A_n8(this);
+      case 0xd6:
+        return instr.SUB_A_n8(this);
       case 0xea:
         return instr.LD_n16_A(this);
       case 0xf8:
@@ -398,6 +400,8 @@ export class CPU {
         return instr.LD_SP_HL(this);
       case 0xfa:
         return instr.LD_A_n16(this);
+      case 0xfe:
+        return instr.CP_A_n8(this);
       default:
         throw new Error("Unknown opcode");
     }

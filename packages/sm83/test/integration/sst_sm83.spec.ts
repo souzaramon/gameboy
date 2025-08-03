@@ -42,8 +42,9 @@ describe("SM83 - SST", () => {
     "a0", "a1", "a2", "a3", "a4", "a5", "a6", "a7", "a8", "a9", "aa", "ab", "ac", "ad", "af",
     "b0", "b1", "b2", "b3", "b4", "b5", "b6", "b7", "be", "b8", "b9", "ba", "bb", "bc", "bd", "bf",
     "c6",
+    "d6",
     "ea", 
-    "f8", "f9", "fa",
+    "f8", "f9", "fa", "fe",
   ];
 
   const cpu = new CPU(new DummyMemory(99999), 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
