@@ -45,6 +45,11 @@ describe("SM83 - SST", () => {
     "d6",
     "ea", "e6", 'e9', "ee",
     "f3", "f6", "f8", "f9", "fa", "fe",
+
+    'cb 40', 'cb 41', 'cb 42', 'cb 43', 'cb 44', 'cb 45', 'cb 47', 'cb 48', 'cb 49', 'cb 4a', 'cb 4b', 'cb 4c', 'cb 4d', 'cb 4f',
+    'cb 50', 'cb 51', 'cb 52', 'cb 53', 'cb 54', 'cb 55', 'cb 57', 'cb 58', 'cb 59', 'cb 5a', 'cb 5b', 'cb 5c', 'cb 5d', 'cb 5f',
+    'cb 60', 'cb 61', 'cb 62', 'cb 63', 'cb 64', 'cb 65', 'cb 67', 'cb 68', 'cb 69', 'cb 6a', 'cb 6b', 'cb 6c', 'cb 6d', 'cb 6f',
+    'cb 70', 'cb 71', 'cb 72', 'cb 73', 'cb 74', 'cb 75', 'cb 77', 'cb 78', 'cb 79', 'cb 7a', 'cb 7b', 'cb 7c', 'cb 7d', 'cb 7f',
   ];
 
   const cpu = new CPU(new DummyMemory(99999), 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);

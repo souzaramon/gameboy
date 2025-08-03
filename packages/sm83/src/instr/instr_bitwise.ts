@@ -124,7 +124,16 @@ export function XOR_A_n8(cpu: CPU): MCycles {
 
 // (CPL):           TODO
 
-// (BIT u3,r8):     TODO
+// (BIT u3,r8): Test bit u3 in register r8, set the zero flag if bit not set.
+export function BIT_u3_r8(cpu: CPU, u3: number, r8: R8) {
+  const result = cpu.getR(r8) & (1 << u3);
+
+  cpu.setF(F.Z, result === 0);
+  cpu.setF(F.N, false);
+  cpu.setF(F.H, true);
+
+  return 2;
+}
 
 // (BIT u3,[HL]):   TODO
 

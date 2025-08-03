@@ -400,6 +400,118 @@ export class CPU {
 
   execPInstruction = (opcode: number): MCycles => {
     switch (opcode) {
+      case 0x40:
+        return instr.BIT_u3_r8(this, 0, R8.B);
+      case 0x41:
+        return instr.BIT_u3_r8(this, 0, R8.C);
+      case 0x42:
+        return instr.BIT_u3_r8(this, 0, R8.D);
+      case 0x43:
+        return instr.BIT_u3_r8(this, 0, R8.E);
+      case 0x44:
+        return instr.BIT_u3_r8(this, 0, R8.H);
+      case 0x45:
+        return instr.BIT_u3_r8(this, 0, R8.L);
+      case 0x47:
+        return instr.BIT_u3_r8(this, 0, R8.A);
+      case 0x48:
+        return instr.BIT_u3_r8(this, 1, R8.B);
+      case 0x49:
+        return instr.BIT_u3_r8(this, 1, R8.C);
+      case 0x4a:
+        return instr.BIT_u3_r8(this, 1, R8.D);
+      case 0x4b:
+        return instr.BIT_u3_r8(this, 1, R8.E);
+      case 0x4c:
+        return instr.BIT_u3_r8(this, 1, R8.H);
+      case 0x4d:
+        return instr.BIT_u3_r8(this, 1, R8.L);
+      case 0x4f:
+        return instr.BIT_u3_r8(this, 1, R8.A);
+      case 0x50:
+        return instr.BIT_u3_r8(this, 2, R8.B);
+      case 0x51:
+        return instr.BIT_u3_r8(this, 2, R8.C);
+      case 0x52:
+        return instr.BIT_u3_r8(this, 2, R8.D);
+      case 0x53:
+        return instr.BIT_u3_r8(this, 2, R8.E);
+      case 0x54:
+        return instr.BIT_u3_r8(this, 2, R8.H);
+      case 0x55:
+        return instr.BIT_u3_r8(this, 2, R8.L);
+      case 0x57:
+        return instr.BIT_u3_r8(this, 2, R8.A);
+      case 0x58:
+        return instr.BIT_u3_r8(this, 3, R8.B);
+      case 0x59:
+        return instr.BIT_u3_r8(this, 3, R8.C);
+      case 0x5a:
+        return instr.BIT_u3_r8(this, 3, R8.D);
+      case 0x5b:
+        return instr.BIT_u3_r8(this, 3, R8.E);
+      case 0x5c:
+        return instr.BIT_u3_r8(this, 3, R8.H);
+      case 0x5d:
+        return instr.BIT_u3_r8(this, 3, R8.L);
+      case 0x5f:
+        return instr.BIT_u3_r8(this, 3, R8.A);
+      case 0x60:
+        return instr.BIT_u3_r8(this, 4, R8.B);
+      case 0x61:
+        return instr.BIT_u3_r8(this, 4, R8.C);
+      case 0x62:
+        return instr.BIT_u3_r8(this, 4, R8.D);
+      case 0x63:
+        return instr.BIT_u3_r8(this, 4, R8.E);
+      case 0x64:
+        return instr.BIT_u3_r8(this, 4, R8.H);
+      case 0x65:
+        return instr.BIT_u3_r8(this, 4, R8.L);
+      case 0x67:
+        return instr.BIT_u3_r8(this, 4, R8.A);
+      case 0x68:
+        return instr.BIT_u3_r8(this, 5, R8.B);
+      case 0x69:
+        return instr.BIT_u3_r8(this, 5, R8.C);
+      case 0x6a:
+        return instr.BIT_u3_r8(this, 5, R8.D);
+      case 0x6b:
+        return instr.BIT_u3_r8(this, 5, R8.E);
+      case 0x6c:
+        return instr.BIT_u3_r8(this, 5, R8.H);
+      case 0x6d:
+        return instr.BIT_u3_r8(this, 5, R8.L);
+      case 0x6f:
+        return instr.BIT_u3_r8(this, 5, R8.A);
+      case 0x70:
+        return instr.BIT_u3_r8(this, 6, R8.B);
+      case 0x71:
+        return instr.BIT_u3_r8(this, 6, R8.C);
+      case 0x72:
+        return instr.BIT_u3_r8(this, 6, R8.D);
+      case 0x73:
+        return instr.BIT_u3_r8(this, 6, R8.E);
+      case 0x74:
+        return instr.BIT_u3_r8(this, 6, R8.H);
+      case 0x75:
+        return instr.BIT_u3_r8(this, 6, R8.L);
+      case 0x77:
+        return instr.BIT_u3_r8(this, 6, R8.A);
+      case 0x78:
+        return instr.BIT_u3_r8(this, 7, R8.B);
+      case 0x79:
+        return instr.BIT_u3_r8(this, 7, R8.C);
+      case 0x7a:
+        return instr.BIT_u3_r8(this, 7, R8.D);
+      case 0x7b:
+        return instr.BIT_u3_r8(this, 7, R8.E);
+      case 0x7c:
+        return instr.BIT_u3_r8(this, 7, R8.H);
+      case 0x7d:
+        return instr.BIT_u3_r8(this, 7, R8.L);
+      case 0x7f:
+        return instr.BIT_u3_r8(this, 7, R8.A);
       default:
         return 0;
     }
