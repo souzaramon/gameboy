@@ -15,7 +15,8 @@ export class CPU {
     public D: number,
     public E: number,
     public H: number,
-    public L: number
+    public L: number,
+    public ime: 0 | 1
   ) {}
 
   step = (): TCycles => {
@@ -374,10 +375,14 @@ export class CPU {
         return instr.SUB_A_n8(this);
       case 0xe6:
         return instr.AND_A_n8(this);
+      case 0xe9:
+        return instr.JP_HL(this);
       case 0xea:
         return instr.LD_n16_A(this);
       case 0xee:
         return instr.XOR_A_n8(this);
+      case 0xf3:
+        return instr.DI(this);
       case 0xf6:
         return instr.OR_A_n8(this);
       case 0xf8:

@@ -17,7 +17,7 @@ interface CPUState {
   h: number;
   l: number;
   ram: number[][];
-  ime: number;
+  ime: 0 | 1;
   ie: number;
 }
 
@@ -43,11 +43,11 @@ describe("SM83 - SST", () => {
     "b0", "b1", "b2", "b3", "b4", "b5", "b6", "b7", "be", "b8", "b9", "ba", "bb", "bc", "bd", "bf",
     "c6",
     "d6",
-    "ea", "e6", "ee",
-    "f6", "f8", "f9", "fa", "fe",
+    "ea", "e6", 'e9', "ee",
+    "f3", "f6", "f8", "f9", "fa", "fe",
   ];
 
-  const cpu = new CPU(new DummyMemory(99999), 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+  const cpu = new CPU(new DummyMemory(99999), 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
   
   for (const opCode of opCodes) {
     const fileName = path.join(__dirname, "sst_sm83", "v1", `${opCode}.json`);
@@ -56,23 +56,24 @@ describe("SM83 - SST", () => {
 
     for (const sstCase of sstCases) {
       test(sstCase.name, () => {
-        cpu.PC = sstCase.initial.pc,
-        cpu.SP = sstCase.initial.sp,
-        cpu.A = sstCase.initial.a,
-        cpu.F = sstCase.initial.f,
-        cpu.B = sstCase.initial.b,
-        cpu.C = sstCase.initial.c,
-        cpu.D = sstCase.initial.d,
-        cpu.E = sstCase.initial.e,
-        cpu.H = sstCase.initial.h,
-        cpu.L = sstCase.initial.l
+        cpu.PC = sstCase.initial.pc;
+        cpu.SP = sstCase.initial.sp;
+        cpu.A = sstCase.initial.a;
+        cpu.F = sstCase.initial.f;
+        cpu.B = sstCase.initial.b;
+        cpu.C = sstCase.initial.c;
+        cpu.D = sstCase.initial.d;
+        cpu.E = sstCase.initial.e;
+        cpu.H = sstCase.initial.h;
+        cpu.L = sstCase.initial.l;
+        cpu.ime = sstCase.initial.ime;
 
         for (const [addr, val] of sstCase.initial.ram) {
           cpu.memory.write8(addr, val);
         }
 
         cpu.step();
-
+        
         expect(cpu.PC).toBe(sstCase.final.pc);
         expect(cpu.SP).toBe(sstCase.final.sp);
         expect(cpu.A).toBe(sstCase.final.a);
@@ -83,6 +84,7 @@ describe("SM83 - SST", () => {
         expect(cpu.E).toBe(sstCase.final.e);
         expect(cpu.H).toBe(sstCase.final.h);
         expect(cpu.L).toBe(sstCase.final.l);
+        expect(cpu.ime).toBe(sstCase.final.ime);
 
         for (const [addr, val] of sstCase.final.ram) {
           expect(cpu.memory.read8(addr)).toBe(val);
