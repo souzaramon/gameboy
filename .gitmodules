@@ -1,3 +1,3 @@
-[submodule "packages/sm83/test/integration/sst_sm83"]
-	path = packages/sm83/test/integration/sst_sm83
+[submodule "test/integration/sst_sm83"]
+	path = test/integration/sst_sm83
 	url = https://github.com/souzaramon/sst_sm83.git
