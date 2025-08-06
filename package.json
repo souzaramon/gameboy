@@ -5,10 +5,12 @@
   "author": "souzaramon",
   "license": "MIT",
   "scripts": {
+    "dev": "vite",
     "test:integration": "vitest --run --bail=1"
   },
   "devDependencies": {
     "@types/node": "^24.1.0",
+    "vite": "^7.0.6",
     "vitest": "^3.2.4"
   }
 }
