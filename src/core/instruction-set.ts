@@ -1,6 +1,5 @@
 import * as proc from "./instruction-proc";
-import { CPU } from "./cpu";
-import { R16, R8 } from "./cpu.types";
+import { CPU, R16, R8 } from "./cpu";
 
 export const INSTRUCTION_SET = {
   0x00: proc.NOP,

@@ -2,7 +2,7 @@ import { expect, test, describe } from "vitest";
 import * as path from "node:path";
 import * as fs from "node:fs";
 import { DummyMemory } from "../DummyMemory";
-import { CPU } from "../../src/cpu";
+import { CPU } from "../../src/core/cpu";
 
 interface CPUState {
   name: string;
