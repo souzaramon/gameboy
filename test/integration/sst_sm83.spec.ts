@@ -233,7 +233,7 @@ describe("SM83 - SST", () => {
     "cb 7f",
   ];
 
-  const cpu = new CPU(new DummyMemory(99999), 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+  const cpu = new CPU(new DummyMemory(99999) as any, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 
   for (const opCode of opCodes) {
     const fileName = path.join(__dirname, "sst_sm83", "v1", `${opCode}.json`);
@@ -255,7 +255,7 @@ describe("SM83 - SST", () => {
         cpu.ime = sstCase.initial.ime;
 
         for (const [addr, val] of sstCase.initial.ram) {
-          cpu.memory.write8(addr, val);
+          cpu.bus.write(addr, val);
         }
 
         cpu.step();
@@ -273,7 +273,7 @@ describe("SM83 - SST", () => {
         expect(cpu.ime).toBe(sstCase.final.ime);
 
         for (const [addr, val] of sstCase.final.ram) {
-          expect(cpu.memory.read8(addr)).toBe(val);
+          expect(cpu.bus.read(addr)).toBe(val);
         }
       });
     }

@@ -6,7 +6,7 @@
   "license": "MIT",
   "scripts": {
     "dev": "vite",
-    "test:integration": "vitest --run --bail=1"
+    "test:integration": "vitest --run --bail=1 --silent"
   },
   "devDependencies": {
     "@types/node": "^24.1.0",

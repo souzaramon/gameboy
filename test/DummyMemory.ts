@@ -1,17 +1,15 @@
-import { MemoryLike } from "../src/cpu";
-
-export class DummyMemory implements MemoryLike {
+export class DummyMemory {
   public data: Uint8Array;
 
   constructor(size: number) {
     this.data = new Uint8Array(size);
   }
 
-  read8(addr: number): number {
+  read(addr: number): number {
     return this.data[addr];
   }
 
-  write8(addr: number, value: number): void {
+  write(addr: number, value: number): void {
     this.data[addr] = value & 0xff;
   }
 
@@ -26,7 +24,7 @@ export class DummyMemory implements MemoryLike {
     const lo = value & 0xff;
     const hi = (value >> 8) & 0xff;
 
-    this.write8(addr, lo);
-    this.write8(addr + 1, hi);
+    this.write(addr, lo);
+    this.write(addr + 1, hi);
   }
 }

@@ -26,11 +26,9 @@ export class ROM {
 
     const checksum = file[0x014d];
     let checksum_acc = 0;
-
     for (let address = 0x0134; address <= 0x014c; address++) {
       checksum_acc = checksum_acc - file[address] - 1;
     }
-
     if ((checksum & 0xff) !== (checksum_acc & 0xff)) {
       throw new Error(`Checksum missmatch, expected ${checksum} got ${checksum_acc}`);
     }
@@ -53,6 +51,12 @@ export class ROM {
       file
     );
   }
+
+  read(addr: number): number {
+    return this.data[addr];
+  }
+
+  write(addr: number, value: number): void {}
 }
 
 const NewLicenseeCodes = {

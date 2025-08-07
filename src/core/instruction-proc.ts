@@ -1,4 +1,5 @@
-import { CPU, R8, R16, F, MCycles } from "./cpu";
+import { CPU } from "./cpu";
+import { MCycles, F, R8, R16 } from "./types";
 
 // (ADD A,r8): Add the value in r8 to A.
 export function ADD_A_r8(cpu: CPU, r8: R8): MCycles {
@@ -18,7 +19,7 @@ export function ADD_A_r8(cpu: CPU, r8: R8): MCycles {
 // (ADD A,[HL]): Add the byte pointed to by HL to A.
 export function ADD_A_HL(cpu: CPU): MCycles {
   const A = cpu.getR(R8.A);
-  const val = cpu.memory.read8(cpu.getR(R16.HL));
+  const val = cpu.bus.read(cpu.getR(R16.HL));
   const result = (A + val) & 0xff;
 
   cpu.setR(R8.A, result);
@@ -33,7 +34,7 @@ export function ADD_A_HL(cpu: CPU): MCycles {
 // (ADD A,n8): Add the value n8 to A.
 export function ADD_A_n8(cpu: CPU): MCycles {
   const A = cpu.getR(R8.A);
-  const val = cpu.memory.read8(cpu.getR(R16.PC));
+  const val = cpu.bus.read(cpu.getR(R16.PC));
   const result = (A + val) & 0xff;
 
   cpu.setR(R16.PC, cpu.getR(R16.PC) + 1);
@@ -70,7 +71,7 @@ export function SUB_A_r8(cpu: CPU, r8: R8): MCycles {
 // (SUB A,[HL]): Subtract the byte pointed to by HL from A.
 export function SUB_A_HL(cpu: CPU): MCycles {
   const A = cpu.getR(R8.A);
-  const val = cpu.memory.read8(cpu.getR(R16.HL));
+  const val = cpu.bus.read(cpu.getR(R16.HL));
   const result = (A - val) & 0xff;
 
   cpu.setR(R8.A, result);
@@ -85,7 +86,7 @@ export function SUB_A_HL(cpu: CPU): MCycles {
 // (SUB A,n8): Subtract the value n8 from A.
 export function SUB_A_n8(cpu: CPU): MCycles {
   const A = cpu.getR(R8.A);
-  const val = cpu.memory.read8(cpu.getR(R16.PC));
+  const val = cpu.bus.read(cpu.getR(R16.PC));
   const result = (A - val) & 0xff;
 
   cpu.setR(R16.PC, cpu.getR(R16.PC) + 1);
@@ -115,7 +116,7 @@ export function CP_A_r8(cpu: CPU, r8: R8): MCycles {
 // (CP A,[HL]): ComPare the value in A with the byte pointed to by HL.
 export function CP_A_HL(cpu: CPU): MCycles {
   const A = cpu.getR(R8.A);
-  const val = cpu.memory.read8(cpu.getR(R16.HL));
+  const val = cpu.bus.read(cpu.getR(R16.HL));
   const result = A - val;
 
   cpu.setF(F.Z, (result & 0xff) === 0);
@@ -129,7 +130,7 @@ export function CP_A_HL(cpu: CPU): MCycles {
 // (CP A,n8): ComPare the value in A with the value n8.
 export function CP_A_n8(cpu: CPU): MCycles {
   const A = cpu.getR(R8.A);
-  const val = cpu.memory.read8(cpu.getR(R16.PC));
+  const val = cpu.bus.read(cpu.getR(R16.PC));
   const result = A - val;
 
   cpu.setR(R16.PC, cpu.getR(R16.PC) + 1);
@@ -192,7 +193,7 @@ export function AND_A_r8(cpu: CPU, r8: R8): MCycles {
 
 // (AND A,[HL]): Set A to the bitwise AND between the byte pointed to by HL and A.
 export function AND_A_HL(cpu: CPU): MCycles {
-  const result = cpu.getR(R8.A) & cpu.memory.read8(cpu.getR(R16.HL));
+  const result = cpu.getR(R8.A) & cpu.bus.read(cpu.getR(R16.HL));
 
   cpu.setR(R8.A, result);
 
@@ -206,7 +207,7 @@ export function AND_A_HL(cpu: CPU): MCycles {
 
 // (AND A,n8): Set A to the bitwise AND between the value n8 and A.
 export function AND_A_n8(cpu: CPU): MCycles {
-  const result = cpu.getR(R8.A) & cpu.memory.read8(cpu.getR(R16.PC));
+  const result = cpu.getR(R8.A) & cpu.bus.read(cpu.getR(R16.PC));
 
   cpu.setR(R16.PC, cpu.getR(R16.PC) + 1);
   cpu.setR(R8.A, result);
@@ -233,7 +234,7 @@ export function OR_A_r8(cpu: CPU, r8: R8): MCycles {
 
 // (OR A,[HL]): Set A to the bitwise OR between the byte pointed to by HL and A.
 export function OR_A_HL(cpu: CPU): MCycles {
-  const result = cpu.getR(R8.A) | cpu.memory.read8(cpu.getR(R16.HL));
+  const result = cpu.getR(R8.A) | cpu.bus.read(cpu.getR(R16.HL));
 
   cpu.setR(R8.A, result);
   cpu.setF(F.Z, result === 0);
@@ -246,7 +247,7 @@ export function OR_A_HL(cpu: CPU): MCycles {
 
 // (OR A,n8): Set A to the bitwise OR between the value n8 and A.
 export function OR_A_n8(cpu: CPU): MCycles {
-  const result = cpu.getR(R8.A) | cpu.memory.read8(cpu.getR(R16.PC));
+  const result = cpu.getR(R8.A) | cpu.bus.read(cpu.getR(R16.PC));
 
   cpu.setR(R16.PC, cpu.getR(R16.PC) + 1);
   cpu.setR(R8.A, result);
@@ -273,7 +274,7 @@ export function XOR_A_r8(cpu: CPU, r8: R8): MCycles {
 
 // (XOR A,[HL]): Set A to the bitwise XOR between the byte pointed to by HL and A.
 export function XOR_A_HL(cpu: CPU): MCycles {
-  const result = cpu.getR(R8.A) ^ cpu.memory.read8(cpu.getR(R16.HL));
+  const result = cpu.getR(R8.A) ^ cpu.bus.read(cpu.getR(R16.HL));
 
   cpu.setR(R8.A, result);
   cpu.setF(F.Z, result === 0);
@@ -286,7 +287,7 @@ export function XOR_A_HL(cpu: CPU): MCycles {
 
 // (XOR A,n8): Set A to the bitwise XOR between the value n8 and A.
 export function XOR_A_n8(cpu: CPU): MCycles {
-  const result = cpu.getR(R8.A) ^ cpu.memory.read8(cpu.getR(R16.PC));
+  const result = cpu.getR(R8.A) ^ cpu.bus.read(cpu.getR(R16.PC));
 
   cpu.setR(R16.PC, cpu.getR(R16.PC) + 1);
   cpu.setR(R8.A, result);
@@ -383,7 +384,13 @@ export function JP_HL(cpu: CPU) {
   return 0;
 }
 
-// (JP n16):      TODO
+// (JP n16): Jump to address n16; effectively, copy n16 into PC.
+export function JP_n16(cpu: CPU) {
+  const addr = cpu.bus.read16(cpu.getR(R16.PC));
+  cpu.setR(R16.PC, addr);
+
+  return 0;
+}
 
 // (JP cc,n16):   TODO
 
@@ -408,7 +415,7 @@ export function LD_r8_r8(cpu: CPU, r8_1: R8, r8_2: R8): MCycles {
 
 // (LD r8,n8): Copy the value n8 into register r8'.
 export function LD_r8_n8(cpu: CPU, r8: R8): MCycles {
-  cpu.setR(r8, cpu.memory.read8(cpu.getR(R16.PC)));
+  cpu.setR(r8, cpu.bus.read(cpu.getR(R16.PC)));
   cpu.setR(R16.PC, cpu.getR(R16.PC) + 1);
 
   return 2;
@@ -416,7 +423,7 @@ export function LD_r8_n8(cpu: CPU, r8: R8): MCycles {
 
 // (LD r16,n16): Copy the value n16 into register r16.
 export function LD_r16_n16(cpu: CPU, r16: R16): MCycles {
-  cpu.setR(r16, cpu.memory.read16(cpu.getR(R16.PC)));
+  cpu.setR(r16, cpu.bus.read16(cpu.getR(R16.PC)));
   cpu.setR(R16.PC, cpu.getR(R16.PC) + 2);
 
   return 2;
@@ -425,21 +432,21 @@ export function LD_r16_n16(cpu: CPU, r16: R16): MCycles {
 // (LD [r16],A): Copy the value in register A into the byte pointed to by r16.
 export function LD_r16_A(cpu: CPU, r16: R16): MCycles {
   const addr = cpu.getR(r16);
-  cpu.memory.write8(addr, cpu.getR(R8.A));
+  cpu.bus.write(addr, cpu.getR(R8.A));
 
   return 2;
 }
 
 // (LD [HL],r8): Copy the value in register r8 into the byte pointed to by HL.
 export function LD_HL_r8(cpu: CPU, r8: R8): MCycles {
-  cpu.memory.write8(cpu.getR(R16.HL), cpu.getR(r8));
+  cpu.bus.write(cpu.getR(R16.HL), cpu.getR(r8));
 
   return 0;
 }
 
 // (LD [HL],n8): Copy the value n8 into the byte pointed to by HL.
 export function LD_HL_n8(cpu: CPU): MCycles {
-  cpu.memory.write8(cpu.getR(R16.HL), cpu.memory.read8(cpu.getR(R16.PC)));
+  cpu.bus.write(cpu.getR(R16.HL), cpu.bus.read(cpu.getR(R16.PC)));
   cpu.setR(R16.PC, cpu.getR(R16.PC) + 1);
 
   return 1;
@@ -447,7 +454,7 @@ export function LD_HL_n8(cpu: CPU): MCycles {
 
 // (LD SP,n16): Copy the value n16 into register SP.
 export function LD_SP_n16(cpu: CPU): MCycles {
-  cpu.setR(R16.SP, cpu.memory.read16(cpu.getR(R16.PC)));
+  cpu.setR(R16.SP, cpu.bus.read16(cpu.getR(R16.PC)));
   cpu.setR(R16.PC, cpu.getR(R16.PC) + 2);
 
   return 2;
@@ -455,14 +462,14 @@ export function LD_SP_n16(cpu: CPU): MCycles {
 
 // (LD A,[r16]): Copy the byte pointed to by r16 into register A.
 export function LD_A_r16(cpu: CPU, r16: R16): MCycles {
-  cpu.setR(R8.A, cpu.memory.read8(cpu.getR(r16)));
+  cpu.setR(R8.A, cpu.bus.read(cpu.getR(r16)));
 
   return 1;
 }
 
 // (LD r8,[HL]): Copy the value pointed to by HL into register r8.
 export function LD_r8_HL(cpu: CPU, r8: R8): MCycles {
-  cpu.setR(r8, cpu.memory.read8(cpu.getR(R16.HL)));
+  cpu.setR(r8, cpu.bus.read(cpu.getR(R16.HL)));
 
   return 1;
 }
@@ -471,7 +478,7 @@ export function LD_r8_HL(cpu: CPU, r8: R8): MCycles {
 export function LD_HLI_A(cpu: CPU): MCycles {
   const HL = cpu.getR(R16.HL);
 
-  cpu.memory.write8(HL, cpu.getR(R8.A));
+  cpu.bus.write(HL, cpu.getR(R8.A));
   cpu.setR(R16.HL, HL + 1);
 
   return 1;
@@ -481,7 +488,7 @@ export function LD_HLI_A(cpu: CPU): MCycles {
 export function LD_HLD_A(cpu: CPU): MCycles {
   const HL = cpu.getR(R16.HL);
 
-  cpu.memory.write8(HL, cpu.getR(R8.A));
+  cpu.bus.write(HL, cpu.getR(R8.A));
   cpu.setR(R16.HL, HL - 1);
 
   return 0;
@@ -491,7 +498,7 @@ export function LD_HLD_A(cpu: CPU): MCycles {
 export function LD_A_HLI(cpu: CPU): MCycles {
   const HL = cpu.getR(R16.HL);
 
-  cpu.setR(R8.A, cpu.memory.read8(HL));
+  cpu.setR(R8.A, cpu.bus.read(HL));
   cpu.setR(R16.HL, HL + 1);
 
   return 1;
@@ -501,7 +508,7 @@ export function LD_A_HLI(cpu: CPU): MCycles {
 export function LD_A_HLD(cpu: CPU): MCycles {
   const HL = cpu.getR(R16.HL);
 
-  cpu.setR(R8.A, cpu.memory.read8(HL));
+  cpu.setR(R8.A, cpu.bus.read(HL));
   cpu.setR(R16.HL, HL - 1);
 
   return 1;
@@ -516,8 +523,8 @@ export function LD_SP_HL(cpu: CPU): MCycles {
 
 // (LD [n16],SP): Copy SP & $FF at address n16 and SP >> 8 at address n16 + 1.
 export function LD_n16_SP(cpu: CPU): MCycles {
-  const addr = cpu.memory.read16(cpu.getR(R16.PC));
-  cpu.memory.write16(addr, cpu.SP);
+  const addr = cpu.bus.read16(cpu.getR(R16.PC));
+  cpu.bus.write16(addr, cpu.SP);
   cpu.setR(R16.PC, cpu.getR(R16.PC) + 2);
 
   return 2;
@@ -525,8 +532,8 @@ export function LD_n16_SP(cpu: CPU): MCycles {
 
 // (LD [n16],A): Copy the value in register A into the byte at address n16.
 export function LD_n16_A(cpu: CPU): MCycles {
-  const addr = cpu.memory.read16(cpu.getR(R16.PC));
-  cpu.memory.write16(addr, cpu.getR(R8.A));
+  const addr = cpu.bus.read16(cpu.getR(R16.PC));
+  cpu.bus.write16(addr, cpu.getR(R8.A));
   cpu.setR(R16.PC, cpu.getR(R16.PC) + 2);
 
   return 2;
@@ -534,16 +541,16 @@ export function LD_n16_A(cpu: CPU): MCycles {
 
 // (LD A,[n16]): Copy the byte at address n16 into register A.
 export function LD_A_n16(cpu: CPU): MCycles {
-  const addr = cpu.memory.read16(cpu.getR(R16.PC));
+  const addr = cpu.bus.read16(cpu.getR(R16.PC));
   cpu.setR(R16.PC, cpu.getR(R16.PC) + 2);
-  cpu.setR(R8.A, cpu.memory.read8(addr));
+  cpu.setR(R8.A, cpu.bus.read(addr));
 
   return 2;
 }
 
 // (LD HL,SP+e8): Add the signed value e8 to SP and copy the result in HL.
 export function LD_HL_SP_E8(cpu: CPU): MCycles {
-  const r8_val = (cpu.memory.read8(cpu.getR(R16.PC)) << 24) >> 24;
+  const r8_val = (cpu.bus.read(cpu.getR(R16.PC)) << 24) >> 24;
   const result = (cpu.SP + r8_val) & 0xffff;
 
   cpu.setR(R16.PC, cpu.getR(R16.PC) + 1);

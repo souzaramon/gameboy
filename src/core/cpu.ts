@@ -1,48 +1,13 @@
+import { Bus } from "./bus";
+import * as proc from "./instruction-proc";
 import { INSTRUCTION_SET, PINSTRUCTION_SET } from "./instruction-set";
-
-export type MCycles = number;
-
-export type TCycles = number;
-
-export const enum R8 {
-  A = "A",
-  F = "F",
-  B = "B",
-  C = "C",
-  D = "D",
-  E = "E",
-  H = "H",
-  L = "L",
-}
-
-export const enum R16 {
-  AF = "AF",
-  BC = "BC",
-  DE = "DE",
-  HL = "HL",
-  PC = "PC",
-  SP = "SP",
-}
-
-export const enum F {
-  Z = 7,
-  N = 6,
-  H = 5,
-  C = 4,
-}
-
-export interface MemoryLike {
-  read8(address: number): number;
-  write8(address: number, value: number): void;
-  read16(address: number): number;
-  write16(address: number, value: number): void;
-}
+import { TCycles, F, R8, R16 } from "./types";
 
 export class CPU {
   private currentOpcode: number;
 
   constructor(
-    public memory: MemoryLike,
+    public bus: Bus,
     public PC: number,
     public SP: number,
     public A: number,
@@ -57,12 +22,12 @@ export class CPU {
   ) {}
 
   step = (): TCycles => {
-    this.currentOpcode = this.memory.read8(this.PC);
+    this.currentOpcode = this.bus.read(this.PC);
     this.setR(R16.PC, this.getR(R16.PC) + 1);
 
     switch (this.currentOpcode) {
       case 0xcb:
-        this.currentOpcode = this.memory.read8(this.PC);
+        this.currentOpcode = this.bus.read(this.PC);
         this.setR(R16.PC, this.getR(R16.PC) + 1);
 
         return this.getProc(this.currentOpcode, PINSTRUCTION_SET)(this) * 4;
@@ -71,14 +36,15 @@ export class CPU {
     }
   };
 
-  getProc(opcode: number, table: Record<number, (cpu: CPU) => MCycles>) {
-    const proc = table[opcode];
+  getProc(opcode: number, table: typeof PINSTRUCTION_SET | typeof INSTRUCTION_SET) {
+    const entry = table[opcode];
 
-    if (!proc) {
-      throw new Error("Unknown opcode " + opcode);
+    if (!entry) {
+      throw new Error(`Entry not found: 0x${opcode.toString(16).padStart(2, "0")}`);
     }
 
-    return proc;
+    console.log(`[0x${opcode.toString(16).padStart(2, "0")}] ${entry.name}, [${entry.operands.join(",")}]`);
+    return proc[entry.name].bind(this, this, ...entry.operands);
   }
 
   getF = (position: F) => {
