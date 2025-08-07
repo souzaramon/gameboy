@@ -4,8 +4,6 @@ import { INSTRUCTION_SET, PINSTRUCTION_SET } from "./instruction-set";
 import { TCycles, F, R8, R16 } from "./types";
 
 export class CPU {
-  private currentOpcode: number;
-
   constructor(
     public bus: Bus,
     public PC: number,
@@ -22,17 +20,17 @@ export class CPU {
   ) {}
 
   step = (): TCycles => {
-    this.currentOpcode = this.bus.read(this.PC);
+    let opcode = this.bus.read(this.PC);
     this.setR(R16.PC, this.getR(R16.PC) + 1);
 
-    switch (this.currentOpcode) {
+    switch (opcode) {
       case 0xcb:
-        this.currentOpcode = this.bus.read(this.PC);
+        opcode = this.bus.read(this.PC);
         this.setR(R16.PC, this.getR(R16.PC) + 1);
 
-        return this.getProc(this.currentOpcode, PINSTRUCTION_SET)(this) * 4;
+        return this.getProc(opcode, PINSTRUCTION_SET)(this) * 4;
       default:
-        return this.getProc(this.currentOpcode, INSTRUCTION_SET)(this) * 4;
+        return this.getProc(opcode, INSTRUCTION_SET)(this) * 4;
     }
   };
 
