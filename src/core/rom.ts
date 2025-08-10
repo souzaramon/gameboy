@@ -21,7 +21,7 @@ export class ROM {
     return new Uint8Array(await (await fetch(url)).arrayBuffer());
   }
 
-  static parse(file: Uint8Array) {
+  static parse(file: Uint8Array<ArrayBuffer>) {
     const td = new TextDecoder();
 
     const checksum = file[0x014d];
