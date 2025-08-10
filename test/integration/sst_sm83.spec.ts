@@ -1,11 +1,11 @@
 import { expect, test, describe } from "vitest";
 import * as path from "node:path";
-import * as fs from "node:fs";
+import * as fs from "node:fs/promises";
 import { DummyMemory } from "../DummyMemory";
 import { CPU } from "../../src/core/cpu";
 import { INSTRUCTION_SET, PINSTRUCTION_SET } from "../../src/core/instruction-set";
 
-interface CPUState {
+export interface CPUState {
   name: string;
   pc: number;
   sp: number;
@@ -22,61 +22,59 @@ interface CPUState {
   ie: number;
 }
 
-interface SM83Case {
+export interface SM83Case {
   name: string;
   initial: CPUState;
   final: CPUState;
 }
 
-describe("SM83 - SST", () => {
+describe("SM83 - SST", { concurrent: true }, () => {
   const opCodes = [
     ...Object.keys(INSTRUCTION_SET).map((i) => Number(i).toString(16).padStart(2, "0")),
     ...Object.keys(PINSTRUCTION_SET).map((i) => "cb " + Number(i).toString(16).padStart(2, "0")),
   ];
 
-  const cpu = new CPU(new DummyMemory(99999) as any, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-
   for (const opCode of opCodes) {
-    const fileName = path.join(__dirname, "sst_sm83", "v1", `${opCode}.json`);
-    const file = fs.readFileSync(fileName, "utf-8");
-    const sstCases = JSON.parse(file) as SM83Case[];
+    test(opCode, async () => {
+      const file_path = path.join(__dirname, "sst_sm83", "v1", `${opCode}.json`);
+      const file = await fs.readFile(file_path, "utf-8");
+      const sst_cases = JSON.parse(file) as SM83Case[];
 
-    for (const sstCase of process.env.CI ? sstCases : sstCases.slice(100, 101)) {
-      test(sstCase.name, () => {
-        cpu.PC = sstCase.initial.pc;
-        cpu.SP = sstCase.initial.sp;
-        cpu.A = sstCase.initial.a;
-        cpu.F = sstCase.initial.f;
-        cpu.B = sstCase.initial.b;
-        cpu.C = sstCase.initial.c;
-        cpu.D = sstCase.initial.d;
-        cpu.E = sstCase.initial.e;
-        cpu.H = sstCase.initial.h;
-        cpu.L = sstCase.initial.l;
-        cpu.ime = sstCase.initial.ime;
+      const cpu = new CPU(new DummyMemory(99999) as any, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 
-        for (const [addr, val] of sstCase.initial.ram) {
+      for (const sst_case of process.env.CI ? sst_cases : sst_cases.slice(100, 101)) {
+        cpu.PC = sst_case.initial.pc;
+        cpu.SP = sst_case.initial.sp;
+        cpu.A = sst_case.initial.a;
+        cpu.F = sst_case.initial.f;
+        cpu.B = sst_case.initial.b;
+        cpu.C = sst_case.initial.c;
+        cpu.D = sst_case.initial.d;
+        cpu.E = sst_case.initial.e;
+        cpu.H = sst_case.initial.h;
+        cpu.L = sst_case.initial.l;
+        cpu.ime = sst_case.initial.ime;
+        for (const [addr, val] of sst_case.initial.ram) {
           cpu.bus.write(addr, val);
         }
 
         cpu.step();
 
-        expect(cpu.PC).toBe(sstCase.final.pc);
-        expect(cpu.SP).toBe(sstCase.final.sp);
-        expect(cpu.A).toBe(sstCase.final.a);
-        expect(cpu.F).toBe(sstCase.final.f);
-        expect(cpu.B).toBe(sstCase.final.b);
-        expect(cpu.C).toBe(sstCase.final.c);
-        expect(cpu.D).toBe(sstCase.final.d);
-        expect(cpu.E).toBe(sstCase.final.e);
-        expect(cpu.H).toBe(sstCase.final.h);
-        expect(cpu.L).toBe(sstCase.final.l);
-        expect(cpu.ime).toBe(sstCase.final.ime);
-
-        for (const [addr, val] of sstCase.final.ram) {
+        expect(cpu.PC).toBe(sst_case.final.pc);
+        expect(cpu.SP).toBe(sst_case.final.sp);
+        expect(cpu.A).toBe(sst_case.final.a);
+        expect(cpu.F).toBe(sst_case.final.f);
+        expect(cpu.B).toBe(sst_case.final.b);
+        expect(cpu.C).toBe(sst_case.final.c);
+        expect(cpu.D).toBe(sst_case.final.d);
+        expect(cpu.E).toBe(sst_case.final.e);
+        expect(cpu.H).toBe(sst_case.final.h);
+        expect(cpu.L).toBe(sst_case.final.l);
+        expect(cpu.ime).toBe(sst_case.final.ime);
+        for (const [addr, val] of sst_case.final.ram) {
           expect(cpu.bus.read(addr)).toBe(val);
         }
-      });
-    }
+      }
+    });
   }
 });
