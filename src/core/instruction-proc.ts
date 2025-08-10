@@ -312,15 +312,56 @@ export function BIT_u3_r8(cpu: CPU, u3: number, r8: R8) {
   return 2;
 }
 
-// (BIT u3,[HL]):   TODO
+// (BIT u3,[HL]): Test bit u3 in the byte pointed by HL, set the zero flag if bit not set.
+export function BIT_u3_HL(cpu: CPU, u3: number) {
+  const result = cpu.bus.read(cpu.getR(R16.HL)) & (1 << u3);
 
-// (RES u3,r8):     TODO
+  cpu.setF(F.Z, result === 0);
+  cpu.setF(F.N, false);
+  cpu.setF(F.H, true);
 
-// (RES u3,[HL]):   TODO
+  return 2;
+}
 
-// (SET u3,r8):     TODO
+// (RES u3,r8): Set bit u3 in register r8 to 0. Bit 0 is the rightmost one, bit 7 the leftmost one.
+export function RES_u3_r8(cpu: CPU, u3: number, r8: R8) {
+  const value = cpu.getR(r8);
+  const mask = ~(1 << u3);
 
-// (SET u3,[HL]):   TODO
+  cpu.setR(r8, value & mask);
+
+  return 2;
+}
+
+// (RES u3,[HL]): Set bit u3 in the byte pointed by HL to 0. Bit 0 is the rightmost one, bit 7 the leftmost one.
+export function RES_u3_HL(cpu: CPU, u3: number) {
+  const HL = cpu.getR(R16.HL);
+  const mask = ~(1 << u3);
+
+  cpu.bus.write(HL, cpu.bus.read(HL) & mask);
+
+  return 2;
+}
+
+// (SET u3,r8): Set bit u3 in register r8 to 1. Bit 0 is the rightmost one, bit 7 the leftmost one.
+export function SET_u3_r8(cpu: CPU, u3: number, r8: R8) {
+  const value = cpu.getR(r8);
+  const mask = 1 << u3;
+
+  cpu.setR(r8, value | mask);
+
+  return 2;
+}
+
+// (SET u3,[HL]): Set bit u3 in the byte pointed by HL to 1. Bit 0 is the rightmost one, bit 7 the leftmost one.
+export function SET_u3_HL(cpu: CPU, u3: number, r8: R8) {
+  const HL = cpu.getR(R16.HL);
+  const mask = 1 << u3;
+
+  cpu.bus.write(HL, cpu.bus.read(HL) | mask);
+
+  return 2;
+}
 
 // (RL r8):         TODO
 
