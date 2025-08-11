@@ -414,7 +414,15 @@ export function DI(cpu: CPU) {
 
 // (HALT): TODO
 
-// (CALL n16):    TODO
+// (CALL n16): This pushes the address of the instruction after the CALL on the stack, such that RET can pop it later; then, it executes an implicit JP n16.
+export function CALL(cpu: CPU) {
+  const addr = cpu.bus.read16(cpu.getR(R16.PC));
+  cpu.setR(R16.PC, cpu.getR(R16.PC) + 2);
+
+  cpu.stack.push16(cpu.getR(R16.PC));
+
+  cpu.setR(R16.PC, addr);
+}
 
 // (CALL cc,n16): TODO
 
@@ -441,7 +449,12 @@ export function JP_n16(cpu: CPU) {
 
 // (RET cc):      TODO
 
-// (RET):         TODO
+// (RET): Return from subroutine. This is basically a POP PC (if such an instruction existed). See POP r16 for an explanation of how POP works.
+export function RET(cpu: CPU) {
+  cpu.setR(R16.PC, cpu.stack.pop16());
+
+  return 0;
+}
 
 // (RETI):        TODO
 
@@ -604,7 +617,15 @@ export function LD_HL_SP_E8(cpu: CPU): MCycles {
   return 3;
 }
 
-// (LDH [n16],A): TODO
+// (LDH [n16],A): Copy the value in register A into the byte at address n16, provided the address is between $FF00 and $FFFF.
+export function LDH_n16_A(cpu: CPU): MCycles {
+  const imm8 = cpu.bus.read(cpu.getR(R16.PC));
+
+  cpu.setR(R16.PC, cpu.getR(R16.PC) + 1);
+  cpu.bus.write(0xff00 + imm8, cpu.getR(R8.A));
+
+  return 3;
+}
 
 // (LDH [C],A):   TODO
 

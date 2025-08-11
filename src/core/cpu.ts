@@ -3,6 +3,38 @@ import * as proc from "./instruction-proc";
 import { INSTRUCTION_SET, PINSTRUCTION_SET } from "./instruction-set";
 import { TCycles, F, R8, R16 } from "./types";
 
+class Stack {
+  constructor(private cpu: CPU) {}
+
+  push(data: number) {
+    this.cpu.setR(R16.SP, this.cpu.getR(R16.SP) - 1);
+    this.cpu.bus.write(this.cpu.getR(R16.SP), data);
+  }
+
+  pop() {
+    const SP = this.cpu.getR(R16.SP);
+    const val = this.cpu.bus.read(SP);
+    this.cpu.setR(R16.SP, SP + 1);
+
+    return val;
+  }
+
+  push16(data: number) {
+    const hi = (data >> 8) & 0xff;
+    const lo = data & 0xff;
+
+    this.cpu.stack.push(hi);
+    this.cpu.stack.push(lo);
+  }
+
+  pop16() {
+    const lo = this.pop();
+    const hi = this.pop();
+
+    return (hi << 8) | lo;
+  }
+}
+
 export class CPU {
   constructor(
     public bus: Bus,
@@ -16,7 +48,8 @@ export class CPU {
     public E: number,
     public H: number,
     public L: number,
-    public ime: 0 | 1
+    public ime: 0 | 1,
+    public stack = new Stack(this)
   ) {}
 
   step = (): TCycles => {
@@ -41,7 +74,15 @@ export class CPU {
       throw new Error(`Entry not found: 0x${opcode.toString(16).padStart(2, "0")}`);
     }
 
-    console.log(`[0x${opcode.toString(16).padStart(2, "0")}] ${entry.name}, [${entry.operands.join(",")}]`);
+    console.log(
+      `%cPC_${String(this.PC).padStart(6, "0")} %c0x${opcode.toString(16).padStart(2, "0")}%c ${
+        entry.name
+      }, [${entry.operands.join(",")}]`,
+      "color: lightgray",
+      "color: yellow",
+      "color: inherit"
+    );
+
     return proc[entry.name].bind(this, this, ...entry.operands);
   }
 
