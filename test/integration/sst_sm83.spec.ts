@@ -2,8 +2,8 @@ import { expect, test, describe } from "vitest";
 import * as path from "node:path";
 import * as fs from "node:fs/promises";
 import { DummyMemory } from "../DummyMemory";
-import { CPU } from "../../src/core/cpu";
-import { INSTRUCTION_SET, PINSTRUCTION_SET } from "../../src/core/instruction-set";
+import { CPU } from "../../src/core/cpu/cpu";
+import { INSTRUCTION_SET, PINSTRUCTION_SET } from "../../src/core/cpu/instruction-set";
 
 export interface CPUState {
   name: string;
@@ -54,6 +54,7 @@ describe("SM83 - SST", { concurrent: true }, () => {
         cpu.H = sst_case.initial.h;
         cpu.L = sst_case.initial.l;
         cpu.ime = sst_case.initial.ime;
+
         for (const [addr, val] of sst_case.initial.ram) {
           cpu.bus.write(addr, val);
         }
@@ -71,6 +72,7 @@ describe("SM83 - SST", { concurrent: true }, () => {
         expect(cpu.H).toBe(sst_case.final.h);
         expect(cpu.L).toBe(sst_case.final.l);
         expect(cpu.ime).toBe(sst_case.final.ime);
+
         for (const [addr, val] of sst_case.final.ram) {
           expect(cpu.bus.read(addr)).toBe(val);
         }

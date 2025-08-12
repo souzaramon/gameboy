@@ -1,39 +1,8 @@
-import { Bus } from "./bus";
+import { Bus } from "../bus";
 import * as proc from "./instruction-proc";
 import { INSTRUCTION_SET, PINSTRUCTION_SET } from "./instruction-set";
-import { TCycles, F, R8, R16 } from "./types";
-
-class Stack {
-  constructor(private cpu: CPU) {}
-
-  push(data: number) {
-    this.cpu.setR(R16.SP, this.cpu.getR(R16.SP) - 1);
-    this.cpu.bus.write(this.cpu.getR(R16.SP), data);
-  }
-
-  pop() {
-    const SP = this.cpu.getR(R16.SP);
-    const val = this.cpu.bus.read(SP);
-    this.cpu.setR(R16.SP, SP + 1);
-
-    return val;
-  }
-
-  push16(data: number) {
-    const hi = (data >> 8) & 0xff;
-    const lo = data & 0xff;
-
-    this.cpu.stack.push(hi);
-    this.cpu.stack.push(lo);
-  }
-
-  pop16() {
-    const lo = this.pop();
-    const hi = this.pop();
-
-    return (hi << 8) | lo;
-  }
-}
+import { Stack } from "./cpu.stack";
+import { F, R8, R16, TCycles } from "./cpu.types";
 
 export class CPU {
   constructor(
@@ -54,12 +23,12 @@ export class CPU {
 
   step = (): TCycles => {
     let opcode = this.bus.read(this.PC);
-    this.setR(R16.PC, this.getR(R16.PC) + 1);
+    this.incReg(R16.PC);
 
     switch (opcode) {
       case 0xcb:
         opcode = this.bus.read(this.PC);
-        this.setR(R16.PC, this.getR(R16.PC) + 1);
+        this.incReg(R16.PC);
 
         return this.getProc(opcode, PINSTRUCTION_SET)(this) * 4;
       default:
@@ -86,11 +55,11 @@ export class CPU {
     return proc[entry.name].bind(this, this, ...entry.operands);
   }
 
-  getF = (position: F) => {
+  getFlag = (position: F) => {
     return (this.F & (1 << position)) !== 0;
   };
 
-  setF = (position: F, val: boolean) => {
+  setFlag = (position: F, val: boolean) => {
     if (val) {
       this.F |= 1 << position;
     } else {
@@ -100,7 +69,7 @@ export class CPU {
     this.F &= 0xf0;
   };
 
-  getR = (name: R8 | R16) => {
+  getReg = (name: R8 | R16) => {
     switch (name) {
       case R8.A:
       case R8.F:
@@ -125,7 +94,7 @@ export class CPU {
     }
   };
 
-  setR = (name: R8 | R16, val: number) => {
+  setReg = (name: R8 | R16, val: number) => {
     switch (name) {
       case R8.A:
       case R8.F:
@@ -156,7 +125,15 @@ export class CPU {
         this[n2] = lo;
         return;
       default:
-        return 0;
+        return;
     }
+  };
+
+  incReg = (name: R8 | R16, amount = 1) => {
+    this.setReg(name, this.getReg(name) + amount);
+  };
+
+  decReg = (name: R8 | R16, amount = 1) => {
+    this.setReg(name, this.getReg(name) - amount);
   };
 }

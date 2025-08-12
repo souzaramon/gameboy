@@ -1,4 +1,7 @@
-import { R16, R8, ProcName } from "./types";
+import * as proc from "./instruction-proc";
+import { R8, R16 } from "./cpu.types";
+
+export type ProcName = keyof typeof proc;
 
 export const INSTRUCTION_SET: Record<number, { name: ProcName; operands: any[] }> = {
   0x00: { name: "NOP", operands: [] },
