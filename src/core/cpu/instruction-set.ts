@@ -1,9 +1,16 @@
 import * as proc from "./instruction-proc";
 import { R8, R16 } from "./cpu.types";
 
-export type ProcName = keyof typeof proc;
+type Proc = typeof proc;
 
-export const INSTRUCTION_SET: Record<number, { name: ProcName; operands: any[] }> = {
+type Entry = {
+  [K in keyof Proc]: {
+    name: K;
+    operands: Parameters<Proc[K]> extends [any, ...infer Rest] ? Rest : [];
+  };
+}[keyof Proc];
+
+export const INSTRUCTION_SET: Record<number, Entry> = {
   0x00: { name: "NOP", operands: [] },
   0x01: { name: "LD_r16_n16", operands: [R16.BC] },
   0x02: { name: "LD_r16_A", operands: [R16.BC] },
@@ -24,12 +31,15 @@ export const INSTRUCTION_SET: Record<number, { name: ProcName; operands: any[] }
   0x29: { name: "ADD_HL_r16", operands: [R16.HL] },
   0x2a: { name: "LD_A_HLI", operands: [] },
   0x2e: { name: "LD_r8_n8", operands: [R8.L] },
+  0x2f: { name: "CPL", operands: [] },
   0x31: { name: "LD_SP_n16", operands: [] },
   0x32: { name: "LD_HLD_A", operands: [] },
   0x36: { name: "LD_HL_n8", operands: [] },
+  0x37: { name: "SCF", operands: [] },
   0x39: { name: "ADD_HL_r16", operands: [R16.SP] },
   0x3a: { name: "LD_A_HLD", operands: [] },
   0x3e: { name: "LD_r8_n8", operands: [R8.A] },
+  0x3f: { name: "CCF", operands: [] },
   0x40: { name: "NOP", operands: [] },
   0x41: { name: "LD_r8_r8", operands: [R8.B, R8.C] },
   0x42: { name: "LD_r8_r8", operands: [R8.B, R8.D] },
@@ -141,12 +151,18 @@ export const INSTRUCTION_SET: Record<number, { name: ProcName; operands: any[] }
   0xbd: { name: "CP_A_r8", operands: [R8.L] },
   0xbe: { name: "CP_A_HL", operands: [] },
   0xbf: { name: "CP_A_r8", operands: [R8.A] },
+  0xc1: { name: "POP_r16", operands: [R16.BC] },
   0xc3: { name: "JP_n16", operands: [] },
+  0xc5: { name: "PUSH_r16", operands: [R16.BC] },
   0xc6: { name: "ADD_A_n8", operands: [] },
   0xc9: { name: "RET", operands: [] },
   0xcd: { name: "CALL", operands: [] },
+  0xd1: { name: "POP_r16", operands: [R16.DE] },
+  0xd5: { name: "PUSH_r16", operands: [R16.DE] },
   0xd6: { name: "SUB_A_n8", operands: [] },
   0xe0: { name: "LDH_n16_A", operands: [] },
+  0xe1: { name: "POP_r16", operands: [R16.HL] },
+  0xe5: { name: "PUSH_r16", operands: [R16.HL] },
   0xe6: { name: "AND_A_n8", operands: [] },
   0xe9: { name: "JP_HL", operands: [] },
   0xea: { name: "LD_n16_A", operands: [] },
@@ -156,10 +172,11 @@ export const INSTRUCTION_SET: Record<number, { name: ProcName; operands: any[] }
   0xf8: { name: "LD_HL_SP_E8", operands: [] },
   0xf9: { name: "LD_SP_HL", operands: [] },
   0xfa: { name: "LD_A_n16", operands: [] },
+  0xfb: { name: "EI", operands: [] },
   0xfe: { name: "CP_A_n8", operands: [] },
 };
 
-export const PINSTRUCTION_SET: Record<number, { name: ProcName; operands: any[] }> = {
+export const PINSTRUCTION_SET: Record<number, Entry> = {
   0x40: { name: "BIT_u3_r8", operands: [0, R8.B] },
   0x41: { name: "BIT_u3_r8", operands: [0, R8.C] },
   0x42: { name: "BIT_u3_r8", operands: [0, R8.D] },

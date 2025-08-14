@@ -1,13 +1,11 @@
 import { Bus } from "./core/bus";
-import { CPU } from "./core/cpu";
-import { ROM } from "./core/rom";
+import { Cpu } from "./core/cpu/cpu";
+import { Rom } from "./core/rom";
 
 (async () => {
-  const rom_file = await ROM.load("/cpu_instrs.gb");
-  const rom = ROM.parse(rom_file);
-
+  const rom = Rom.parse(await Rom.load("/cpu_instrs.gb"));
   const bus = new Bus(rom);
-  const cpu = new CPU(bus, 0x100, 0, 0x01, 0, 0, 0, 0, 0, 0, 0, 0);
+  const cpu = new Cpu(bus, 0x100, 0, 0x01);
 
   while (true) {
     cpu.step();

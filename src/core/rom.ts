@@ -1,6 +1,6 @@
 import { NewLicenseeCodes, OldLicenseeCodes, CartridgeTypes, ROMSizes, RAMSizes, DestinationCodes } from "./rom.types";
 
-export class ROM {
+export class Rom {
   constructor(
     public checksum: number,
     public title: string,
@@ -35,7 +35,7 @@ export class ROM {
       throw new Error(`Checksum missmatch, expected ${checksum} got ${checksum_acc}`);
     }
 
-    return new ROM(
+    return new Rom(
       checksum,
       td.decode(file.slice(0x0134, 0x0143)).replace(/\0/g, ""),
       file.slice(0x0104, 0x0133),

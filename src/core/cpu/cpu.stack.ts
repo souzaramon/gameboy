@@ -1,8 +1,8 @@
-import { CPU } from "./cpu";
+import { Cpu } from "./cpu";
 import { R16 } from "./cpu.types";
 
 export class Stack {
-  constructor(private cpu: CPU) {}
+  constructor(private cpu: Cpu) {}
 
   push(data: number) {
     this.cpu.decReg(R16.SP);

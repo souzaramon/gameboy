@@ -2,7 +2,7 @@ import { expect, test, describe } from "vitest";
 import * as path from "node:path";
 import * as fs from "node:fs/promises";
 import { DummyMemory } from "../DummyMemory";
-import { CPU } from "../../src/core/cpu/cpu";
+import { Cpu } from "../../src/core/cpu/cpu";
 import { INSTRUCTION_SET, PINSTRUCTION_SET } from "../../src/core/cpu/instruction-set";
 
 export interface CPUState {
@@ -40,7 +40,7 @@ describe("SM83 - SST", { concurrent: true }, () => {
       const file = await fs.readFile(file_path, "utf-8");
       const sst_cases = JSON.parse(file) as SM83Case[];
 
-      const cpu = new CPU(new DummyMemory(99999) as any, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+      const cpu = new Cpu(new DummyMemory(99999) as any, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
 
       for (const sst_case of process.env.CI ? sst_cases : sst_cases.slice(100, 101)) {
         cpu.PC = sst_case.initial.pc;

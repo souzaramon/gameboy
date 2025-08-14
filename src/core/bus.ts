@@ -15,10 +15,10 @@
  *  0xFF80 - 0xFFFE: Zero Page
  */
 
-import { ROM } from "./rom";
+import { Rom } from "./rom";
 
 export class Bus {
-  constructor(private rom: ROM) {}
+  constructor(private rom: Rom) {}
 
   read(addr: number): number {
     if (addr < 0x8000) {

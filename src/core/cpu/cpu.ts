@@ -4,20 +4,20 @@ import { INSTRUCTION_SET, PINSTRUCTION_SET } from "./instruction-set";
 import { Stack } from "./cpu.stack";
 import { F, R8, R16, TCycles } from "./cpu.types";
 
-export class CPU {
+export class Cpu {
   constructor(
     public bus: Bus,
     public PC: number,
     public SP: number,
-    public A: number,
-    public F: number,
-    public B: number,
-    public C: number,
-    public D: number,
-    public E: number,
-    public H: number,
-    public L: number,
-    public ime: 0 | 1,
+    public A = 0,
+    public F = 0,
+    public B = 0,
+    public C = 0,
+    public D = 0,
+    public E = 0,
+    public H = 0,
+    public L = 0,
+    public ime: 0 | 1 = 0,
     public stack = new Stack(this)
   ) {}
 
