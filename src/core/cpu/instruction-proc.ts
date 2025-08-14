@@ -573,13 +573,53 @@ export function SET_u3_HL(cpu: Cpu, u3: number): MCycles {
 
 // (RR [HL]):       TODO
 
-// (RRA):           TODO
+// (RRA): Rotate register A right, through the carry flag.
+export function RRA(cpu: Cpu) {
+  const A = cpu.getReg(R8.A);
+  const bit0 = A & 1;
+  const C = cpu.getFlag(F.C);
+  const result = (Number(C) << 7) | (A >> 1);
 
-// (RRC r8):        TODO
+  cpu.setReg(R8.A, result);
+  cpu.setFlag(F.Z, false);
+  cpu.setFlag(F.N, false);
+  cpu.setFlag(F.H, false);
+  cpu.setFlag(F.C, Boolean(bit0));
+
+  return 0;
+}
+
+// (RRC r8): Rotate register r8 right.
+export function RRC_r8(cpu: Cpu, r8: R8) {
+  const val = cpu.getReg(r8);
+  const bit0 = val & 1;
+  const result = (bit0 << 7) | (val >> 1);
+
+  cpu.setReg(r8, result);
+  cpu.setFlag(F.Z, result === 0);
+  cpu.setFlag(F.N, false);
+  cpu.setFlag(F.H, false);
+  cpu.setFlag(F.C, Boolean(bit0));
+
+  return 0;
+}
 
 // (RRC [HL]):      TODO
 
-// (RRCA):          TODO
+// (RRCA): Rotate register A right.
+export function RRCA(cpu: Cpu) {
+  const A = cpu.getReg(R8.A);
+  const bit0 = A & 1;
+  const result = (bit0 << 7) | (A >> 1);
+
+  cpu.setReg(R8.A, result);
+  cpu.setFlag(F.Z, false);
+  cpu.setFlag(F.N, false);
+  cpu.setFlag(F.H, false);
+  cpu.setFlag(F.C, Boolean(bit0));
+
+  return 0;
+}
 
 // (SLA r8):        TODO
 

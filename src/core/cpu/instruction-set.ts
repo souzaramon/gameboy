@@ -25,6 +25,7 @@ export const INSTRUCTION_SET: Record<number, Entry> = {
   0x0c: { name: "INC_r8", operands: [R8.C] },
   0x0d: { name: "DEC_r8", operands: [R8.C] },
   0x0e: { name: "LD_r8_n8", operands: [R8.C] },
+  0x0f: { name: "RRCA", operands: [] },
   0x11: { name: "LD_r16_n16", operands: [R16.DE] },
   0x12: { name: "LD_r16_A", operands: [R16.DE] },
   0x13: { name: "INC_r16", operands: [R16.DE] },
@@ -38,6 +39,7 @@ export const INSTRUCTION_SET: Record<number, Entry> = {
   0x1c: { name: "INC_r8", operands: [R8.E] },
   0x1d: { name: "DEC_r8", operands: [R8.E] },
   0x1e: { name: "LD_r8_n8", operands: [R8.E] },
+  0x1f: { name: "RRA", operands: [] },
   0x21: { name: "LD_r16_n16", operands: [R16.HL] },
   0x22: { name: "LD_HLI_A", operands: [] },
   0x23: { name: "INC_r16", operands: [R16.HL] },
@@ -223,6 +225,13 @@ export const INSTRUCTION_SET: Record<number, Entry> = {
 };
 
 export const PINSTRUCTION_SET: Record<number, Entry> = {
+  0x08: { name: "RRC_r8", operands: [R8.B] },
+  0x09: { name: "RRC_r8", operands: [R8.C] },
+  0x0a: { name: "RRC_r8", operands: [R8.D] },
+  0x0b: { name: "RRC_r8", operands: [R8.E] },
+  0x0c: { name: "RRC_r8", operands: [R8.H] },
+  0x0d: { name: "RRC_r8", operands: [R8.L] },
+  0x0f: { name: "RRC_r8", operands: [R8.A] },
   0x40: { name: "BIT_u3_r8", operands: [0, R8.B] },
   0x41: { name: "BIT_u3_r8", operands: [0, R8.C] },
   0x42: { name: "BIT_u3_r8", operands: [0, R8.D] },
