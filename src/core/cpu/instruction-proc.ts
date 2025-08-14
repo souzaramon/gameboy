@@ -1,6 +1,11 @@
 import { Cpu } from "./cpu";
 import { F, R8, R16 } from "./cpu.types";
 
+// r8 = register name, not a number.
+// n8 = immediate 8-bit constant (can be treated as unsigned or signed depending on context).
+// u8 = immediate but always treated as unsigned.
+// e8 = immediate but always treated as signed (two’s complement), usually for offsets.
+
 export type MCycles = number;
 
 // (ADD A,r8): Add the value in r8 to A.
@@ -63,7 +68,22 @@ export function ADD_HL_r16(cpu: Cpu, r16: R16): MCycles {
   return 0;
 }
 
-// (ADD SP,e8):   TODO
+// (ADD SP,e8): Add the signed value e8 to SP.
+export function ADD_SP_e8(cpu: Cpu): MCycles {
+  const SP = cpu.getReg(R16.SP);
+  const e8 = cpu.bus.read(cpu.getReg(R16.PC));
+  const e8_signed = e8 < 0x80 ? e8 : e8 - 0x100;
+  const result = (SP + e8_signed) & 0xffff;
+
+  cpu.incReg(R16.PC);
+  cpu.setReg(R16.SP, result);
+  cpu.setFlag(F.Z, false);
+  cpu.setFlag(F.N, false);
+  cpu.setFlag(F.H, (SP & 0xf) + (e8_signed & 0xf) > 0xf);
+  cpu.setFlag(F.C, (SP & 0xff) + (e8_signed & 0xff) > 0xff);
+
+  return 0;
+}
 
 // (SUB A,r8): Subtract the value in r8 from A.
 export function SUB_A_r8(cpu: Cpu, r8: R8): MCycles {
@@ -182,18 +202,25 @@ export function CP_A_n8(cpu: Cpu): MCycles {
 
 // (SBC A,n8):   TODO
 
-// (POP AF):      TODO
+// (POP AF): Pop register AF from the stack.
+export function POP_AF(cpu: Cpu): MCycles {
+  const lo = cpu.stack.pop();
+  const hi = cpu.stack.pop();
 
-// (POP r16): Pop register r16 from the stack. This is roughly equivalent to the following imaginary instructions:
+  cpu.setReg(R8.A, hi);
+  cpu.setReg(R8.F, lo & 0xf0);
+
+  return 0;
+}
+
+// (POP r16): Pop register r16 from the stack.
 export function POP_r16(cpu: Cpu, r16: R16): MCycles {
   cpu.setReg(r16, cpu.stack.pop16());
 
   return 0;
 }
 
-// (PUSH AF):     TODO
-
-// (PUSH r16): Push register r16 into the stack. This is roughly equivalent to the following imaginary instructions:
+// (PUSH AF) / (PUSH r16): Push register r16 into the stack.
 export function PUSH_r16(cpu: Cpu, r16: R16): MCycles {
   cpu.stack.push16(cpu.getReg(r16));
 
@@ -477,7 +504,15 @@ export function JP_n16(cpu: Cpu): MCycles {
 
 // (JP cc,n16):   TODO
 
-// (JR n16):      TODO
+// (JR n16): Relative Jump to address n16.
+export function JR_n16(cpu: Cpu) {
+  const val = cpu.bus.read(cpu.getReg(R16.PC));
+  const val_signed = val < 0x80 ? val : val - 0x100;
+
+  cpu.incReg(R16.PC, val_signed + 1);
+
+  return 2;
+}
 
 // (JR cc,n16):   TODO
 
