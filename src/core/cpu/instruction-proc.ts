@@ -49,9 +49,20 @@ export function ADD_A_n8(cpu: CPU): MCycles {
   return 0;
 }
 
-// (ADD HL,r16): TODO
+// (ADD HL,SP) / (ADD HL,r16): Add the value in r16 to HL.
+export function ADD_HL_r16(cpu: CPU, r16: R16): MCycles {
+  const HL = cpu.getReg(R16.HL);
+  const val = cpu.getReg(r16);
+  const result = (HL + val) & 0xffff;
 
-// (ADD HL,SP):   TODO
+  cpu.setReg(R16.HL, result);
+
+  cpu.setFlag(F.N, false);
+  cpu.setFlag(F.H, (HL & 0xfff) + (val & 0xfff) > 0xfff);
+  cpu.setFlag(F.C, HL + val > 0xffff);
+
+  return 0;
+}
 
 // (ADD SP,e8):   TODO
 
@@ -611,10 +622,10 @@ export function LD_HL_SP_E8(cpu: CPU): MCycles {
 
 // (LDH [n16],A): Copy the value in register A into the byte at address n16, provided the address is between $FF00 and $FFFF.
 export function LDH_n16_A(cpu: CPU): MCycles {
-  const imm8 = cpu.bus.read(cpu.getReg(R16.PC));
+  const addr = 0xff00 + cpu.bus.read(cpu.getReg(R16.PC));
 
   cpu.incReg(R16.PC);
-  cpu.bus.write(0xff00 + imm8, cpu.getReg(R8.A));
+  cpu.bus.write(addr, cpu.getReg(R8.A));
 
   return 3;
 }
