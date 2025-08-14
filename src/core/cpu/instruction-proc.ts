@@ -291,11 +291,54 @@ export function INC_r16(cpu: Cpu, r16: R16) {
   return 0;
 }
 
-// (SBC A,r8):   TODO
+// (SBC A,r8): Subtract the value in r8 and the carry flag from A.
+export function SBC_A_r8(cpu: Cpu, r8: R8) {
+  const A = cpu.getReg(R8.A);
+  const val = cpu.getReg(r8);
+  const C = Number(cpu.getFlag(F.C));
+  const result = (A - val - C) & 0xff;
 
-// (SBC A,[HL]): TODO
+  cpu.setReg(R8.A, result);
+  cpu.setFlag(F.Z, result === 0);
+  cpu.setFlag(F.N, true);
+  cpu.setFlag(F.H, (A & 0xf) - (val & 0xf) - C < 0);
+  cpu.setFlag(F.C, A < val + C);
 
-// (SBC A,n8):   TODO
+  return 0;
+}
+
+// (SBC A,[HL]): Subtract the byte pointed to by HL and the carry flag from A.
+export function SBC_A_HL(cpu: Cpu): MCycles {
+  const A = cpu.getReg(R8.A);
+  const val = cpu.bus.read(cpu.getReg(R16.HL));
+  const C = Number(cpu.getFlag(F.C));
+  const result = (A - val - C) & 0xff;
+
+  cpu.setReg(R8.A, result);
+  cpu.setFlag(F.Z, result === 0);
+  cpu.setFlag(F.N, true);
+  cpu.setFlag(F.H, (A & 0xf) - (val & 0xf) - C < 0);
+  cpu.setFlag(F.C, A < val + C);
+
+  return 2;
+}
+
+// (SBC A,n8): Subtract the value n8 and the carry flag from A.
+export function SBC_A_n8(cpu: Cpu): MCycles {
+  const A = cpu.getReg(R8.A);
+  const val = cpu.bus.read(cpu.getReg(R16.PC));
+  const C = Number(cpu.getFlag(F.C));
+  const result = (A - val - C) & 0xff;
+
+  cpu.incReg(R16.PC);
+  cpu.setReg(R8.A, result);
+  cpu.setFlag(F.Z, result === 0);
+  cpu.setFlag(F.N, true);
+  cpu.setFlag(F.H, (A & 0xf) - (val & 0xf) - C < 0);
+  cpu.setFlag(F.C, A < val + C);
+
+  return 0;
+}
 
 // (POP AF): Pop register AF from the stack.
 export function POP_AF(cpu: Cpu): MCycles {
