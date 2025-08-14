@@ -5,6 +5,11 @@ import { Stack } from "./cpu.stack";
 import { F, R8, R16, TCycles } from "./cpu.types";
 
 export class Cpu {
+  public stack = new Stack(this);
+
+  public ime: 0 | 1 = 0;
+  public ei: 0 | 1 = 0;
+
   constructor(
     public bus: Bus,
     public PC: number,
@@ -16,12 +21,12 @@ export class Cpu {
     public D = 0,
     public E = 0,
     public H = 0,
-    public L = 0,
-    public ime: 0 | 1 = 0,
-    public stack = new Stack(this)
+    public L = 0
   ) {}
 
   step = (): TCycles => {
+    let t_cycles = 0;
+
     let opcode = this.bus.read(this.PC);
     this.incReg(R16.PC);
 
@@ -30,13 +35,17 @@ export class Cpu {
         opcode = this.bus.read(this.PC);
         this.incReg(R16.PC);
 
-        return this.getProc(opcode, PINSTRUCTION_SET)(this) * 4;
+        t_cycles = this.getProc(opcode, PINSTRUCTION_SET)(this) * 4;
+        break;
       default:
-        return this.getProc(opcode, INSTRUCTION_SET)(this) * 4;
+        t_cycles = this.getProc(opcode, INSTRUCTION_SET)(this) * 4;
+        break;
     }
+
+    return t_cycles;
   };
 
-  getProc(opcode: number, table: typeof PINSTRUCTION_SET | typeof INSTRUCTION_SET) {
+  getProc = (opcode: number, table: typeof PINSTRUCTION_SET | typeof INSTRUCTION_SET) => {
     const entry = table[opcode];
 
     if (!entry) {
@@ -53,7 +62,7 @@ export class Cpu {
     );
 
     return proc[entry.name].bind(this, this, ...entry.operands);
-  }
+  };
 
   getFlag = (position: F) => {
     return (this.F & (1 << position)) !== 0;

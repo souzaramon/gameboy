@@ -56,7 +56,6 @@ export function ADD_HL_r16(cpu: Cpu, r16: R16): MCycles {
   const result = (HL + val) & 0xffff;
 
   cpu.setReg(R16.HL, result);
-
   cpu.setFlag(F.N, false);
   cpu.setFlag(F.H, (HL & 0xfff) + (val & 0xfff) > 0xfff);
   cpu.setFlag(F.C, HL + val > 0xffff);
@@ -186,7 +185,7 @@ export function CP_A_n8(cpu: Cpu): MCycles {
 // (POP AF):      TODO
 
 // (POP r16): Pop register r16 from the stack. This is roughly equivalent to the following imaginary instructions:
-export function POP_r16(cpu: Cpu, r16: R16) {
+export function POP_r16(cpu: Cpu, r16: R16): MCycles {
   cpu.setReg(r16, cpu.stack.pop16());
 
   return 0;
@@ -195,7 +194,7 @@ export function POP_r16(cpu: Cpu, r16: R16) {
 // (PUSH AF):     TODO
 
 // (PUSH r16): Push register r16 into the stack. This is roughly equivalent to the following imaginary instructions:
-export function PUSH_r16(cpu: Cpu, r16: R16) {
+export function PUSH_r16(cpu: Cpu, r16: R16): MCycles {
   cpu.stack.push16(cpu.getReg(r16));
 
   return 0;
@@ -323,7 +322,7 @@ export function XOR_A_n8(cpu: Cpu): MCycles {
 }
 
 // (CPL): ComPLement accumulator (A = ~A); also called bitwise NOT.
-export function CPL(cpu: Cpu) {
+export function CPL(cpu: Cpu): MCycles {
   cpu.setReg(R8.A, ~cpu.getReg(R8.A));
   cpu.setFlag(F.N, true);
   cpu.setFlag(F.H, true);
@@ -332,7 +331,7 @@ export function CPL(cpu: Cpu) {
 }
 
 // (BIT u3,r8): Test bit u3 in register r8, set the zero flag if bit not set.
-export function BIT_u3_r8(cpu: Cpu, u3: number, r8: R8) {
+export function BIT_u3_r8(cpu: Cpu, u3: number, r8: R8): MCycles {
   const result = cpu.getReg(r8) & (1 << u3);
 
   cpu.setFlag(F.Z, result === 0);
@@ -343,7 +342,7 @@ export function BIT_u3_r8(cpu: Cpu, u3: number, r8: R8) {
 }
 
 // (BIT u3,[HL]): Test bit u3 in the byte pointed by HL, set the zero flag if bit not set.
-export function BIT_u3_HL(cpu: Cpu, u3: number) {
+export function BIT_u3_HL(cpu: Cpu, u3: number): MCycles {
   const result = cpu.bus.read(cpu.getReg(R16.HL)) & (1 << u3);
 
   cpu.setFlag(F.Z, result === 0);
@@ -354,7 +353,7 @@ export function BIT_u3_HL(cpu: Cpu, u3: number) {
 }
 
 // (RES u3,r8): Set bit u3 in register r8 to 0. Bit 0 is the rightmost one, bit 7 the leftmost one.
-export function RES_u3_r8(cpu: Cpu, u3: number, r8: R8) {
+export function RES_u3_r8(cpu: Cpu, u3: number, r8: R8): MCycles {
   const value = cpu.getReg(r8);
   const mask = ~(1 << u3);
 
@@ -364,7 +363,7 @@ export function RES_u3_r8(cpu: Cpu, u3: number, r8: R8) {
 }
 
 // (RES u3,[HL]): Set bit u3 in the byte pointed by HL to 0. Bit 0 is the rightmost one, bit 7 the leftmost one.
-export function RES_u3_HL(cpu: Cpu, u3: number) {
+export function RES_u3_HL(cpu: Cpu, u3: number): MCycles {
   const HL = cpu.getReg(R16.HL);
   const mask = ~(1 << u3);
 
@@ -374,7 +373,7 @@ export function RES_u3_HL(cpu: Cpu, u3: number) {
 }
 
 // (SET u3,r8): Set bit u3 in register r8 to 1. Bit 0 is the rightmost one, bit 7 the leftmost one.
-export function SET_u3_r8(cpu: Cpu, u3: number, r8: R8) {
+export function SET_u3_r8(cpu: Cpu, u3: number, r8: R8): MCycles {
   const value = cpu.getReg(r8);
   const mask = 1 << u3;
 
@@ -384,7 +383,7 @@ export function SET_u3_r8(cpu: Cpu, u3: number, r8: R8) {
 }
 
 // (SET u3,[HL]): Set bit u3 in the byte pointed by HL to 1. Bit 0 is the rightmost one, bit 7 the leftmost one.
-export function SET_u3_HL(cpu: Cpu, u3: number) {
+export function SET_u3_HL(cpu: Cpu, u3: number): MCycles {
   const HL = cpu.getReg(R16.HL);
   const mask = 1 << u3;
 
@@ -434,15 +433,15 @@ export function SET_u3_HL(cpu: Cpu, u3: number) {
 // (SWAP [HL]):     TODO
 
 // (DI): Disable Interrupts by clearing the IME flag.
-export function DI(cpu: Cpu) {
+export function DI(cpu: Cpu): MCycles {
   cpu.ime = 0;
 
   return 0;
 }
 
 // (EI): Enable Interrupts by setting the IME flag.
-export function EI(cpu: Cpu) {
-  cpu.ime = 1;
+export function EI(cpu: Cpu): MCycles {
+  cpu.ei = 1;
 
   return 0;
 }
@@ -450,24 +449,26 @@ export function EI(cpu: Cpu) {
 // (HALT): TODO
 
 // (CALL n16): This pushes the address of the instruction after the CALL on the stack, such that RET can pop it later; then, it executes an implicit JP n16.
-export function CALL(cpu: Cpu) {
+export function CALL(cpu: Cpu): MCycles {
   const addr = cpu.bus.read16(cpu.getReg(R16.PC));
   cpu.incReg(R16.PC, 2);
   cpu.stack.push16(cpu.getReg(R16.PC));
   cpu.setReg(R16.PC, addr);
+
+  return 0;
 }
 
 // (CALL cc,n16): TODO
 
 // (JP HL): Jump to address in HL; effectively, copy the value in register HL into PC.
-export function JP_HL(cpu: Cpu) {
+export function JP_HL(cpu: Cpu): MCycles {
   cpu.setReg(R16.PC, cpu.getReg(R16.HL));
 
   return 0;
 }
 
 // (JP n16): Jump to address n16; effectively, copy n16 into PC.
-export function JP_n16(cpu: Cpu) {
+export function JP_n16(cpu: Cpu): MCycles {
   const addr = cpu.bus.read16(cpu.getReg(R16.PC));
   cpu.setReg(R16.PC, addr);
 
@@ -483,7 +484,7 @@ export function JP_n16(cpu: Cpu) {
 // (RET cc):      TODO
 
 // (RET): Return from subroutine. This is basically a POP PC (if such an instruction existed). See POP r16 for an explanation of how POP works.
-export function RET(cpu: Cpu) {
+export function RET(cpu: Cpu): MCycles {
   cpu.setReg(R16.PC, cpu.stack.pop16());
 
   return 0;
@@ -661,21 +662,23 @@ export function LDH_n16_A(cpu: Cpu): MCycles {
 // (DAA):  TODO
 
 // (NOP): No OPeration.
-export function NOP() {
+export function NOP(): MCycles {
   return 0;
 }
 
 // (STOP): TODO
 
 // (CCF): Complement Carry Flag.
-export function CCF(cpu: Cpu) {
+export function CCF(cpu: Cpu): MCycles {
+  cpu.setFlag(F.N, false);
+  cpu.setFlag(F.H, false);
   cpu.setFlag(F.C, !cpu.getFlag(F.C));
 
   return 0;
 }
 
 // (SCF): Set Carry Flag.
-export function SCF(cpu: Cpu) {
+export function SCF(cpu: Cpu): MCycles {
   cpu.setFlag(F.N, false);
   cpu.setFlag(F.H, false);
   cpu.setFlag(F.C, true);

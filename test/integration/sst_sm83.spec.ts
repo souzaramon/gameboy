@@ -5,6 +5,8 @@ import { DummyMemory } from "../DummyMemory";
 import { Cpu } from "../../src/core/cpu/cpu";
 import { INSTRUCTION_SET, PINSTRUCTION_SET } from "../../src/core/cpu/instruction-set";
 
+export type Cycle = [address: number | null, data: number | null, flags: string];
+
 export interface CPUState {
   name: string;
   pc: number;
@@ -19,13 +21,14 @@ export interface CPUState {
   l: number;
   ram: number[][];
   ime: 0 | 1;
-  ie: number;
+  ei: 0 | 1;
 }
 
 export interface SM83Case {
   name: string;
   initial: CPUState;
   final: CPUState;
+  cycles: Cycle[];
 }
 
 describe("SM83 - SST", { concurrent: true }, () => {
@@ -40,7 +43,7 @@ describe("SM83 - SST", { concurrent: true }, () => {
       const file = await fs.readFile(file_path, "utf-8");
       const sst_cases = JSON.parse(file) as SM83Case[];
 
-      const cpu = new Cpu(new DummyMemory(99999) as any, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+      const cpu = new Cpu(new DummyMemory(99999) as any, 0, 0);
 
       for (const sst_case of process.env.CI ? sst_cases : sst_cases.slice(100, 101)) {
         cpu.PC = sst_case.initial.pc;
@@ -54,6 +57,7 @@ describe("SM83 - SST", { concurrent: true }, () => {
         cpu.H = sst_case.initial.h;
         cpu.L = sst_case.initial.l;
         cpu.ime = sst_case.initial.ime;
+        cpu.ei = sst_case.initial.ei;
 
         for (const [addr, val] of sst_case.initial.ram) {
           cpu.bus.write(addr, val);
@@ -72,6 +76,7 @@ describe("SM83 - SST", { concurrent: true }, () => {
         expect(cpu.H).toBe(sst_case.final.h);
         expect(cpu.L).toBe(sst_case.final.l);
         expect(cpu.ime).toBe(sst_case.final.ime);
+        expect(cpu.ei).toBe(sst_case.final.ei);
 
         for (const [addr, val] of sst_case.final.ram) {
           expect(cpu.bus.read(addr)).toBe(val);
