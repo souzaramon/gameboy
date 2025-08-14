@@ -174,11 +174,54 @@ export function CP_A_n8(cpu: Cpu): MCycles {
   return 0;
 }
 
-// (ADC A,r8):   TODO
+// (ADC A,r8): Add the value in r8 plus the carry flag to A.
+export function ADC_A_r8(cpu: Cpu, r8: R8) {
+  const A = cpu.getReg(R8.A);
+  const val = cpu.getReg(r8);
+  const C = Number(cpu.getFlag(F.C));
+  const result = (A + val + C) & 0xff;
 
-// (ADC A,[HL]): TODO
+  cpu.setReg(R8.A, result);
+  cpu.setFlag(F.Z, result === 0);
+  cpu.setFlag(F.N, false);
+  cpu.setFlag(F.H, (A & 0xf) + (val & 0xf) + C > 0xf);
+  cpu.setFlag(F.C, A + val + C > 0xff);
 
-// (ADC A,n8):   TODO
+  return 0;
+}
+
+// (ADC A,[HL]): Add the byte pointed to by HL plus the carry flag to A.
+export function ADC_A_HL(cpu: Cpu): MCycles {
+  const A = cpu.getReg(R8.A);
+  const val = cpu.bus.read(cpu.getReg(R16.HL));
+  const C = Number(cpu.getFlag(F.C));
+  const result = (A + val + C) & 0xff;
+
+  cpu.setReg(R8.A, result);
+  cpu.setFlag(F.Z, result === 0);
+  cpu.setFlag(F.N, false);
+  cpu.setFlag(F.H, (A & 0xf) + (val & 0xf) + C > 0xf);
+  cpu.setFlag(F.C, A + val + C > 0xff);
+
+  return 2;
+}
+
+// (ADC A,n8): Add the value n8 plus the carry flag to A.
+export function ADC_A_n8(cpu: Cpu): MCycles {
+  const A = cpu.getReg(R8.A);
+  const val = cpu.bus.read(cpu.getReg(R16.PC));
+  const C = Number(cpu.getFlag(F.C));
+  const result = (A + val + C) & 0xff;
+
+  cpu.incReg(R16.PC);
+  cpu.setReg(R8.A, result);
+  cpu.setFlag(F.Z, result === 0);
+  cpu.setFlag(F.N, false);
+  cpu.setFlag(F.H, (A & 0xf) + (val & 0xf) + C > 0xf);
+  cpu.setFlag(F.C, A + val + C > 0xff);
+
+  return 0;
+}
 
 // (DEC r8): Decrement the value in register r8 by 1.
 export function DEC_r8(cpu: Cpu, r8: R8) {
