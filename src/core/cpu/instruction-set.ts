@@ -47,6 +47,7 @@ export const INSTRUCTION_SET: Record<number, Entry> = {
   0x24: { name: "INC_r8", operands: [R8.H] },
   0x25: { name: "DEC_r8", operands: [R8.H] },
   0x26: { name: "LD_r8_n8", operands: [R8.H] },
+  0x27: { name: "DAA", operands: [] },
   0x28: { name: "JR_cc_n16", operands: [C.Z] },
   0x29: { name: "ADD_HL_r16", operands: [R16.HL] },
   0x2a: { name: "LD_A_HLI", operands: [] },

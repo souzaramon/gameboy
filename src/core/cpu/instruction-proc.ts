@@ -829,7 +829,43 @@ export function LDH_A_C(cpu: Cpu) {
   cpu.set_reg(R8.A, cpu.bus.read(0xff00 + C_val));
 }
 
-// (DAA):  TODO
+// (DAA): Decimal Adjust Accumulator.
+export function DAA(cpu: Cpu) {
+  const N_val = cpu.get_flag(F.N);
+  const H_val = cpu.get_flag(F.H);
+  const C_val = cpu.get_flag(F.C);
+
+  let adjustment = 0;
+
+  if (N_val) {
+    if (H_val) {
+      adjustment += 0x6;
+    }
+
+    if (C_val) {
+      adjustment += 0x60;
+    }
+
+    cpu.dec_reg(R8.A, adjustment);
+    cpu.set_flag(F.C, false);
+  } else {
+    const A_val = cpu.get_reg(R8.A);
+
+    if (H_val || (A_val & 0xf) > 0x9) {
+      adjustment += 0x6;
+    }
+
+    if (C_val || A_val > 0x99) {
+      adjustment += 0x60;
+      cpu.set_flag(F.C, true);
+    }
+
+    cpu.inc_reg(R8.A, adjustment);
+  }
+
+  cpu.set_flag(F.Z, adjustment === 0);
+  cpu.set_flag(F.H, false);
+}
 
 // (NOP): No OPeration.
 export function NOP() {}
