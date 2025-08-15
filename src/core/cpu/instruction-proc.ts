@@ -594,7 +594,8 @@ export function EI(cpu: Cpu) {
   cpu.ei = 1;
 }
 
-// (HALT): TODO
+// (HALT): Enter CPU low-power consumption mode until an interrupt occurs.
+export function HALT() {}
 
 // (CALL n16): This pushes the address of the instruction after the CALL on the stack, such that RET can pop it later; then, it executes an implicit JP n16.
 export function CALL_n16(cpu: Cpu) {
@@ -668,7 +669,11 @@ export function RET(cpu: Cpu) {
   cpu.set_reg(R16.PC, cpu.stack.pop16());
 }
 
-// (RETI):        TODO
+// (RETI): Return from subroutine and enable interrupts. This is basically equivalent to executing EI then RET, meaning that IME is set right after this instruction.
+export function RETI(cpu: Cpu) {
+  cpu.ime = 1;
+  cpu.set_reg(R16.PC, cpu.stack.pop16());
+}
 
 // (RST vec):     TODO
 
@@ -870,7 +875,8 @@ export function DAA(cpu: Cpu) {
 // (NOP): No OPeration.
 export function NOP() {}
 
-// (STOP): TODO
+// (STOP): Enter CPU very low power mode.
+export function STOP() {}
 
 // (CCF): Complement Carry Flag.
 export function CCF(cpu: Cpu) {
