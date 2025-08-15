@@ -26,3 +26,10 @@ export const enum R16 {
   PC = "PC",
   SP = "SP",
 }
+
+export const enum C {
+  C,
+  NC,
+  Z,
+  NZ,
+}

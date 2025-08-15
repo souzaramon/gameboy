@@ -1,10 +1,20 @@
 import { Cpu } from "./cpu";
-import { F, R8, R16 } from "./cpu.types";
+import { F, R8, R16, C } from "./cpu.types";
 
-// r8 = register name, not a number.
-// n8 = immediate 8-bit constant (can be treated as unsigned or signed depending on context).
-// u8 = immediate but always treated as unsigned.
-// e8 = immediate but always treated as signed (two’s complement), usually for offsets.
+/**
+ * r8  : Any of the 8-bit registers (A, B, C, D, E, H, L).
+ * r16 : Any of the general-purpose 16-bit registers (BC, DE, HL).
+ * n8  : 8-bit integer constant (signed or unsigned, -128 to 255).
+ * n16 : 16-bit integer constant (signed or unsigned, -32768 to 65535).
+ * e8  : 8-bit signed offset (-128 to 127).
+ * u3  : 3-bit unsigned bit index (0 to 7, with 0 as the least significant bit).
+ * cc  : A condition code:
+ *     - Z  Execute if Z is set.
+ *     - NZ Execute if Z is not set.
+ *     - C  Execute if C is set.
+ *     - NC Execute if C is not set.
+ * vec: An RST vector (0x00, 0x08, 0x10, 0x18, 0x20, 0x28, 0x30, and 0x38).
+ */
 
 export type MCycles = number;
 
@@ -654,7 +664,7 @@ export function EI(cpu: Cpu): MCycles {
 // (HALT): TODO
 
 // (CALL n16): This pushes the address of the instruction after the CALL on the stack, such that RET can pop it later; then, it executes an implicit JP n16.
-export function CALL(cpu: Cpu): MCycles {
+export function CALL_n16(cpu: Cpu): MCycles {
   const addr = cpu.bus.read16(cpu.getReg(R16.PC));
   cpu.incReg(R16.PC, 2);
   cpu.stack.push16(cpu.getReg(R16.PC));
@@ -663,7 +673,18 @@ export function CALL(cpu: Cpu): MCycles {
   return 0;
 }
 
-// (CALL cc,n16): TODO
+// (CALL cc,n16): Call address n16 if condition cc is met.
+export function CALL_cc_n16(cpu: Cpu, condition: C): MCycles {
+  const addr = cpu.bus.read16(cpu.getReg(R16.PC));
+  cpu.incReg(R16.PC, 2);
+
+  if (cpu.check_condition(condition)) {
+    cpu.stack.push16(cpu.getReg(R16.PC));
+    cpu.setReg(R16.PC, addr);
+  }
+
+  return 0;
+}
 
 // (JP HL): Jump to address in HL; effectively, copy the val in register HL into PC.
 export function JP_HL(cpu: Cpu): MCycles {
@@ -680,7 +701,19 @@ export function JP_n16(cpu: Cpu): MCycles {
   return 0;
 }
 
-// (JP cc,n16):   TODO
+// (JP cc,n16): Jump to address n16 if condition cc is met.
+export function JP_cc_n16(cpu: Cpu, condition: C): MCycles {
+  const addr = cpu.bus.read16(cpu.getReg(R16.PC));
+  cpu.incReg(R16.PC, 2);
+
+  if (cpu.check_condition(condition)) {
+    cpu.setReg(R16.PC, addr);
+
+    return 4;
+  }
+
+  return 3;
+}
 
 // (JR n16): Relative Jump to address n16.
 export function JR_n16(cpu: Cpu) {
@@ -692,9 +725,29 @@ export function JR_n16(cpu: Cpu) {
   return 2;
 }
 
-// (JR cc,n16):   TODO
+// (JR cc,n16): Relative Jump to address n16 if condition cc is met.
+export function JR_cc_n16(cpu: Cpu, condition: C): MCycles {
+  const val = cpu.bus.read(cpu.getReg(R16.PC));
+  cpu.incReg(R16.PC);
 
-// (RET cc):      TODO
+  if (cpu.check_condition(condition)) {
+    const val_signed = val < 0x80 ? val : val - 0x100;
+    cpu.incReg(R16.PC, val_signed);
+  }
+
+  return 0;
+}
+
+// (RET cc): Return from subroutine if condition cc is met.
+export function RET_cc(cpu: Cpu, condition: C): MCycles {
+  if (cpu.check_condition(condition)) {
+    cpu.setReg(R16.PC, cpu.stack.pop16());
+
+    return 5;
+  }
+
+  return 2;
+}
 
 // (RET): Return from subroutine. This is basically a POP PC (if such an instruction existed). See POP r16 for an explanation of how POP works.
 export function RET(cpu: Cpu): MCycles {

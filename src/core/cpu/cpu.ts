@@ -2,7 +2,7 @@ import { Bus } from "../bus";
 import * as proc from "./instruction-proc";
 import { INSTRUCTION_SET, PINSTRUCTION_SET } from "./instruction-set";
 import { Stack } from "./cpu.stack";
-import { F, R8, R16, TCycles } from "./cpu.types";
+import { F, R8, R16, C, TCycles } from "./cpu.types";
 
 export class Cpu {
   public stack = new Stack(this);
@@ -144,5 +144,23 @@ export class Cpu {
 
   decReg = (name: R8 | R16, amount = 1) => {
     this.setReg(name, this.getReg(name) - amount);
+  };
+
+  check_condition = (condition: C) => {
+    const c = this.getFlag(F.C);
+    const z = this.getFlag(F.Z);
+
+    switch (condition) {
+      case C.C:
+        return c;
+      case C.Z:
+        return z;
+      case C.NC:
+        return !c;
+      case C.NZ:
+        return !z;
+      default:
+        return false;
+    }
   };
 }
