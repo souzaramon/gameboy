@@ -843,24 +843,12 @@ export function DAA(cpu: Cpu) {
   const N_val = cpu.get_flag(F.N);
   const H_val = cpu.get_flag(F.H);
   const C_val = cpu.get_flag(F.C);
+  const A_val = cpu.get_reg(R8.A);
 
   let adjustment = 0;
 
-  if (N_val) {
-    if (H_val) {
-      adjustment += 0x6;
-    }
-
-    if (C_val) {
-      adjustment += 0x60;
-    }
-
-    cpu.dec_reg(R8.A, adjustment);
-    cpu.set_flag(F.C, false);
-  } else {
-    const A_val = cpu.get_reg(R8.A);
-
-    if (H_val || (A_val & 0xf) > 0x9) {
+  if (!N_val) {
+    if (H_val || (A_val & 0xf) > 9) {
       adjustment += 0x6;
     }
 
@@ -868,11 +856,19 @@ export function DAA(cpu: Cpu) {
       adjustment += 0x60;
       cpu.set_flag(F.C, true);
     }
-
-    cpu.inc_reg(R8.A, adjustment);
+  } else {
+    if (H_val) {
+      adjustment -= 0x6;
+    }
+    if (C_val) {
+      adjustment -= 0x60;
+    }
   }
 
-  cpu.set_flag(F.Z, adjustment === 0);
+  const result = (A_val + adjustment) & 0xff;
+  cpu.set_reg(R8.A, result);
+
+  cpu.set_flag(F.Z, result === 0);
   cpu.set_flag(F.H, false);
 }
 
