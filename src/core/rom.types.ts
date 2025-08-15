@@ -1,4 +1,4 @@
-export const NewLicenseeCodes = {
+export const NEW_LICENSEE_CODES = {
   "00": "None",
   "01": "Nintendo Research & Development 1",
   "08": "Capcom",
@@ -65,7 +65,7 @@ export const NewLicenseeCodes = {
   DK: "Kodansha",
 } as const;
 
-export const OldLicenseeCodes = {
+export const OLD_LICENSEE_CODES = {
   0x00: "None",
   0x01: "Nintendo",
   0x08: "Capcom",
@@ -215,7 +215,7 @@ export const OldLicenseeCodes = {
   0xff: "LJN",
 } as const;
 
-export const CartridgeTypes = {
+export const CARTRIDGE_TYPES = {
   0x00: "ROM ONLY",
   0x01: "MBC1",
   0x02: "MBC1+RAM",
@@ -246,7 +246,7 @@ export const CartridgeTypes = {
   0xff: "HuC1+RAM+BATTERY",
 } as const;
 
-export const ROMSizes = {
+export const ROM_SIZES = {
   0x00: { value: 0x00, size: "32 KiB", numberOfROMBanks: "2 (no banking)" },
   0x01: { value: 0x01, size: "64 KiB", numberOfROMBanks: "4" },
   0x02: { value: 0x02, size: "128 KiB", numberOfROMBanks: "8" },
@@ -261,7 +261,7 @@ export const ROMSizes = {
   0x54: { value: 0x54, size: "1.5 MiB", numberOfROMBanks: "96 11" },
 } as const;
 
-export const RAMSizes = {
+export const RAM_SIZES = {
   0x00: { code: 0x00, SRAMSize: "0", comment: "No RAM" },
   0x01: { code: 0x01, SRAMSize: "-", comment: "Unused" },
   0x02: { code: 0x02, SRAMSize: "8 KiB", comment: "1 bank" },
@@ -270,7 +270,7 @@ export const RAMSizes = {
   0x05: { code: 0x05, SRAMSize: "64 KiB", comment: "8 banks of 8 KiB each" },
 } as const;
 
-export const DestinationCodes = {
+export const DESTINATION_CODES = {
   0x00: "Japan (and possibly overseas)",
   0x01: "Overseas only",
 } as const;

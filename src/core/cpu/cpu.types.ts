@@ -1,5 +1,3 @@
-export type TCycles = number;
-
 export const enum F {
   Z = 7,
   N = 6,

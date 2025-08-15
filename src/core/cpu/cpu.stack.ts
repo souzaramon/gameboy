@@ -5,13 +5,13 @@ export class Stack {
   constructor(private cpu: Cpu) {}
 
   push(data: number) {
-    this.cpu.decReg(R16.SP);
-    this.cpu.bus.write(this.cpu.getReg(R16.SP), data);
+    this.cpu.dec_reg(R16.SP);
+    this.cpu.bus.write(this.cpu.get_reg(R16.SP), data);
   }
 
   pop() {
-    const val = this.cpu.bus.read(this.cpu.getReg(R16.SP));
-    this.cpu.incReg(R16.SP);
+    const val = this.cpu.bus.read(this.cpu.get_reg(R16.SP));
+    this.cpu.inc_reg(R16.SP);
 
     return val;
   }

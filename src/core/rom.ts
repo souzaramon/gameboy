@@ -1,21 +1,28 @@
-import { NewLicenseeCodes, OldLicenseeCodes, CartridgeTypes, ROMSizes, RAMSizes, DestinationCodes } from "./rom.types";
+import {
+  NEW_LICENSEE_CODES,
+  OLD_LICENSEE_CODES,
+  CARTRIDGE_TYPES,
+  ROM_SIZES,
+  RAM_SIZES,
+  DESTINATION_CODES,
+} from "./rom.types";
 
 export class Rom {
   constructor(
     public checksum: number,
     public title: string,
     public logo: Uint8Array<ArrayBuffer>,
-    public manufacturerCode: Uint8Array<ArrayBuffer>,
-    public newLicenseeCode: string,
-    public oldLicenseeCode: string,
-    public CGBFlag: number,
-    public SGBFlag: number,
-    public cartridgeType: string,
-    public ROMSize: { value: number; size: string; numberOfROMBanks: string },
-    public RAMSize: { code: number; SRAMSize: string; comment: string },
-    public destinationCode: string,
-    public maskROMVersionNumber: number,
-    public globalChecksum: Uint8Array<ArrayBuffer>,
+    public manufacturer_code: Uint8Array<ArrayBuffer>,
+    public new_licensee_code: string,
+    public old_licensee_code: string,
+    public cgb_flag: number,
+    public sgb_flag: number,
+    public cartridge_type: string,
+    public rom_size: { value: number; size: string; number_of_rom_banks: string },
+    public ram_size: { code: number; sram_size: string; comment: string },
+    public destination_code: string,
+    public mask_rom_version_number: number,
+    public global_checksum: Uint8Array<ArrayBuffer>,
     public data: Uint8Array<ArrayBuffer>
   ) {}
 
@@ -40,14 +47,14 @@ export class Rom {
       td.decode(file.slice(0x0134, 0x0143)).replace(/\0/g, ""),
       file.slice(0x0104, 0x0133),
       file.slice(0x013f, 0x0142),
-      NewLicenseeCodes[String(file[0x0144]) + String(file[0x0145])],
-      OldLicenseeCodes[file[0x014b]],
+      NEW_LICENSEE_CODES[String(file[0x0144]) + String(file[0x0145])],
+      OLD_LICENSEE_CODES[file[0x014b]],
       file[0x0143],
       file[0x0146],
-      CartridgeTypes[file[0x0147]],
-      ROMSizes[file[0x0148]],
-      RAMSizes[file[0x0149]],
-      DestinationCodes[file[0x014a]],
+      CARTRIDGE_TYPES[file[0x0147]],
+      ROM_SIZES[file[0x0148]],
+      RAM_SIZES[file[0x0149]],
+      DESTINATION_CODES[file[0x014a]],
       file[0x014c],
       file.slice(0x014e, 0x014f),
       file
