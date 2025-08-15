@@ -1,5 +1,5 @@
 import { Cpu } from "./cpu";
-import { F, R8, R16, C } from "./cpu.types";
+import { F, R8, R16, C, Vec } from "./cpu.types";
 
 /**
  * r8  : Any of the 8-bit registers (A, B, C, D, E, H, L).
@@ -675,7 +675,11 @@ export function RETI(cpu: Cpu) {
   cpu.set_reg(R16.PC, cpu.stack.pop16());
 }
 
-// (RST vec):     TODO
+// (RST vec): Call address vec
+export function RST_vec(cpu: Cpu, vec: Vec) {
+  cpu.stack.push16(cpu.get_reg(R16.PC));
+  cpu.set_reg(R16.PC, vec);
+}
 
 // (LD r8,r8): Copy the val in register on the right into the register on the left.
 export function LD_r8_r8(cpu: Cpu, r8_1: R8, r8_2: R8) {

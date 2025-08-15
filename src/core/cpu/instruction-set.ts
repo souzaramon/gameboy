@@ -214,6 +214,7 @@ export const INSTRUCTION_SET: Record<number, Entry> = {
   0xcc: { name: "CALL_cc_n16", operands: [C.Z] },
   0xcd: { name: "CALL_n16", operands: [] },
   0xce: { name: "ADC_A_n8", operands: [] },
+  0xcf: { name: "RST_vec", operands: [0x08] },
   0xd0: { name: "RET_cc", operands: [C.NC] },
   0xd1: { name: "POP_r16", operands: [R16.DE] },
   0xd2: { name: "JP_cc_n16", operands: [C.NC] },
@@ -225,6 +226,7 @@ export const INSTRUCTION_SET: Record<number, Entry> = {
   0xda: { name: "JP_cc_n16", operands: [C.C] },
   0xdc: { name: "CALL_cc_n16", operands: [C.C] },
   0xde: { name: "SBC_A_n8", operands: [] },
+  0xdf: { name: "RST_vec", operands: [0x18] },
   0xe0: { name: "LDH_n16_A", operands: [] },
   0xe1: { name: "POP_r16", operands: [R16.HL] },
   0xe2: { name: "LDH_C_A", operands: [] },
@@ -234,6 +236,7 @@ export const INSTRUCTION_SET: Record<number, Entry> = {
   0xe9: { name: "JP_HL", operands: [] },
   0xea: { name: "LD_n16_A", operands: [] },
   0xee: { name: "XOR_A_n8", operands: [] },
+  0xef: { name: "RST_vec", operands: [0x28] },
   0xf0: { name: "LDH_A_n16", operands: [] },
   0xf1: { name: "POP_AF", operands: [] },
   0xf2: { name: "LDH_A_C", operands: [] },
@@ -245,6 +248,7 @@ export const INSTRUCTION_SET: Record<number, Entry> = {
   0xfa: { name: "LD_A_n16", operands: [] },
   0xfb: { name: "EI", operands: [] },
   0xfe: { name: "CP_A_n8", operands: [] },
+  0xff: { name: "RST_vec", operands: [0x38] },
 };
 
 export const PINSTRUCTION_SET: Record<number, Entry> = {
