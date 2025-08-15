@@ -580,9 +580,36 @@ export function RRCA(cpu: Cpu) {
 
 // (SRL [HL]):      TODO
 
-// (SWAP r8):       TODO
+// (SWAP r8): Swap the upper 4 bits in register r8 and the lower 4 ones.
+export function SWAP(cpu: Cpu, r8: R8) {
+  const r8_val = cpu.get_reg(r8);
+  const lo = r8_val & 0xf;
+  const hi = r8_val >> 4;
 
-// (SWAP [HL]):     TODO
+  const result = (lo << 4) | hi;
+  cpu.set_reg(r8, result);
+
+  cpu.set_flag(F.Z, result === 0);
+  cpu.set_flag(F.N, false);
+  cpu.set_flag(F.H, false);
+  cpu.set_flag(F.C, false);
+}
+
+// (SWAP [HL]): Swap the upper 4 bits in the byte pointed by HL and the lower 4 ones.
+export function SWAP_HL(cpu: Cpu) {
+  const HL_val = cpu.get_reg(R16.HL);
+  const n8_val = cpu.bus.read(HL_val);
+  const hi = n8_val >> 4;
+  const lo = n8_val & 0xf;
+
+  const result = (lo << 4) | hi;
+  cpu.bus.write(HL_val, result);
+
+  cpu.set_flag(F.Z, result === 0);
+  cpu.set_flag(F.N, false);
+  cpu.set_flag(F.H, false);
+  cpu.set_flag(F.C, false);
+}
 
 // (DI): Disable Interrupts by clearing the IME flag.
 export function DI(cpu: Cpu) {
