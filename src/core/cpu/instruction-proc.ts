@@ -807,11 +807,27 @@ export function LDH_n16_A(cpu: Cpu) {
   cpu.bus.write(0xff00 + n8_val, cpu.get_reg(R8.A));
 }
 
-// (LDH [C],A):   TODO
+// (LDH [C],A): Copy the value in register A into the byte at address $FF00+C.
+export function LDH_C_A(cpu: Cpu) {
+  const A_val = cpu.get_reg(R8.A);
+  const C_val = cpu.get_reg(R8.C);
 
-// (LDH A,[n16]): TODO
+  cpu.bus.write(0xff00 + C_val, A_val);
+}
 
-// (LDH A,[C]):   TODO
+// (LDH A,[n16]): Copy the byte at address n16 into register A, provided the address is between $FF00 and $FFFF.
+export function LDH_A_n16(cpu: Cpu) {
+  const n16_val = cpu.bus.read(cpu.get_reg(R16.PC));
+  cpu.inc_reg(R16.PC, 1);
+
+  cpu.set_reg(R8.A, cpu.bus.read(0xff00 + n16_val));
+}
+
+// (LDH A,[C]): Copy the byte at address $FF00+C into register A.
+export function LDH_A_C(cpu: Cpu) {
+  const C_val = cpu.get_reg(R8.C);
+  cpu.set_reg(R8.A, cpu.bus.read(0xff00 + C_val));
+}
 
 // (DAA):  TODO
 
