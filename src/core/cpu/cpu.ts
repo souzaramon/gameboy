@@ -33,9 +33,9 @@ export class Cpu {
         opcode = this.bus.read(this.PC);
         this.inc_reg(R16.PC);
 
-        return this.get_proc(opcode, PINSTRUCTION_SET)(this) * 4;
+        return this.get_proc(opcode, PINSTRUCTION_SET)(this);
       default:
-        return this.get_proc(opcode, INSTRUCTION_SET)(this) * 4;
+        return this.get_proc(opcode, INSTRUCTION_SET)(this);
     }
   };
 
