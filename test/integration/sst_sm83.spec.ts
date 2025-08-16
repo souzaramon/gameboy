@@ -3,7 +3,6 @@ import * as path from "node:path";
 import * as fs from "node:fs/promises";
 import { DummyMemory } from "../DummyMemory";
 import { Cpu } from "../../src/core/cpu/cpu";
-import { INSTRUCTION_SET, PINSTRUCTION_SET } from "../../src/core/cpu/instruction-set";
 
 export type Cycle = [address: number | null, data: number | null, flags: string];
 
@@ -31,16 +30,12 @@ export interface SM83Case {
   cycles: Cycle[];
 }
 
-describe("SM83 - SST", { concurrent: true }, () => {
-  const opCodes = [
-    ...Object.keys(INSTRUCTION_SET).map((i) => Number(i).toString(16).padStart(2, "0")),
-    ...Object.keys(PINSTRUCTION_SET).map((i) => "cb " + Number(i).toString(16).padStart(2, "0")),
-  ];
+describe("SM83 - SST", { concurrent: true }, async () => {
+  const op_codes = await fs.readdir(path.join(__dirname, "sst_sm83", "v1"));
 
-  for (const opCode of opCodes) {
-    test(opCode, async () => {
-      const file_path = path.join(__dirname, "sst_sm83", "v1", `${opCode}.json`);
-      const file = await fs.readFile(file_path, "utf-8");
+  for (const op_code of op_codes) {
+    test(op_code, async () => {
+      const file = await fs.readFile(path.join(__dirname, "sst_sm83", "v1", op_code), "utf-8");
       const sst_cases = JSON.parse(file) as SM83Case[];
 
       const cpu = new Cpu(new DummyMemory(99999) as any, 0, 0);

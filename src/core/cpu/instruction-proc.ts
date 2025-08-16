@@ -507,32 +507,121 @@ export function SET_u3_HL(cpu: Cpu, u3: number) {
   cpu.bus.write(HL_val, cpu.bus.read(HL_val) | mask);
 }
 
-// (RL r8):         TODO
-
-// (RL [HL]):       TODO
-
-// (RLA):           TODO
-
-// (RLC r8):        TODO
-
-// (RLC [HL]):      TODO
-
-// (RLCA):          TODO
-
-// (RR r8):         TODO
-
-// (RR [HL]):       TODO
-
-// (RRA): Rotate register A right, through the carry flag.
-export function RRA(cpu: Cpu) {
+// (RLA): Rotate bits in register A left, through the carry flag.
+export function RLA(cpu: Cpu) {
   const A_val = cpu.get_reg(R8.A);
-  const C_val = cpu.get_flag(F.C);
-  const carry = A_val & 1;
+  const C_val = Number(cpu.get_flag(F.C));
+  const msb = (A_val >> 7) & 1;
 
-  const result = (Number(C_val) << 7) | (A_val >> 1);
+  const result = ((A_val << 1) | C_val) & 0xff;
   cpu.set_reg(R8.A, result);
 
   cpu.set_flag(F.Z, false);
+  cpu.set_flag(F.N, false);
+  cpu.set_flag(F.H, false);
+  cpu.set_flag(F.C, msb);
+}
+
+// (RL r8): Rotate bits in register r8 left, through the carry flag.
+export function RL_r8(cpu: Cpu, r8: R8) {
+  const r8_val = cpu.get_reg(r8);
+  const C_val = Number(cpu.get_flag(F.C));
+  const msb = (r8_val >> 7) & 1;
+
+  const result = ((r8_val << 1) | C_val) & 0xff;
+  cpu.set_reg(r8, result);
+
+  cpu.set_flag(F.Z, result === 0);
+  cpu.set_flag(F.N, false);
+  cpu.set_flag(F.H, false);
+  cpu.set_flag(F.C, msb);
+}
+
+// (RL [HL]): Rotate the byte pointed to by HL left, through the carry flag.
+export function RL_HL(cpu: Cpu) {
+  const HL_val = cpu.get_reg(R16.HL);
+  const n8_val = cpu.bus.read(HL_val);
+  const C_val = Number(cpu.get_flag(F.C));
+  const msb = (n8_val >> 7) & 1;
+
+  const result = ((n8_val << 1) | C_val) & 0xff;
+  cpu.bus.write(HL_val, result);
+
+  cpu.set_flag(F.Z, result === 0);
+  cpu.set_flag(F.N, false);
+  cpu.set_flag(F.H, false);
+  cpu.set_flag(F.C, msb);
+}
+
+// (RLCA): Rotate A register r8 left.
+export function RLCA(cpu: Cpu) {
+  const A_val = cpu.get_reg(R8.A);
+  const msb = (A_val >> 7) & 1;
+
+  const result = ((A_val << 1) | msb) & 0xff;
+  cpu.set_reg(R8.A, result);
+
+  cpu.set_flag(F.Z, false);
+  cpu.set_flag(F.N, false);
+  cpu.set_flag(F.H, false);
+  cpu.set_flag(F.C, msb);
+}
+
+// (RLC r8): Rotate register r8 left.
+export function RLC_r8(cpu: Cpu, r8: R8) {
+  const r8_val = cpu.get_reg(r8);
+  const msb = (r8_val >> 7) & 1;
+
+  const result = ((r8_val << 1) | msb) & 0xff;
+  cpu.set_reg(r8, result);
+
+  cpu.set_flag(F.Z, result === 0);
+  cpu.set_flag(F.N, false);
+  cpu.set_flag(F.H, false);
+  cpu.set_flag(F.C, msb);
+}
+
+// (RLC [HL]): Rotate the byte pointed to by HL left.
+export function RLC_HL(cpu: Cpu) {
+  const HL_val = cpu.get_reg(R16.HL);
+  const n8_val = cpu.bus.read(HL_val);
+  const msb = (n8_val >> 7) & 1;
+
+  const result = ((n8_val << 1) | msb) & 0xff;
+  cpu.bus.write(HL_val, result);
+
+  cpu.set_flag(F.Z, result === 0);
+  cpu.set_flag(F.N, false);
+  cpu.set_flag(F.H, false);
+  cpu.set_flag(F.C, msb);
+}
+
+// (RRA) / (RR r8): Rotate register r8 right, through the carry flag.
+export function RR_r8(cpu: Cpu, r8: R8) {
+  const r8_val = cpu.get_reg(r8);
+  const C_val = cpu.get_flag(F.C);
+  const carry = r8_val & 1;
+
+  const result = (Number(C_val) << 7) | (r8_val >> 1);
+  cpu.set_reg(r8, result);
+
+  cpu.set_flag(F.Z, result === 0);
+  cpu.set_flag(F.N, false);
+  cpu.set_flag(F.H, false);
+  cpu.set_flag(F.C, carry);
+}
+
+// (RR [HL]): Rotate the byte pointed to by HL right, through the carry flag.
+export function RR_HL(cpu: Cpu) {
+  const HL_val = cpu.get_reg(R16.HL);
+  const n8_val = cpu.bus.read(HL_val);
+  const C_val = cpu.get_flag(F.C);
+  const carry = n8_val & 1;
+
+  const result = (Number(C_val) << 7) | (n8_val >> 1);
+  cpu.bus.write(HL_val, result);
+
+  cpu.set_flag(F.Z, result === 0);
   cpu.set_flag(F.N, false);
   cpu.set_flag(F.H, false);
   cpu.set_flag(F.C, carry);
