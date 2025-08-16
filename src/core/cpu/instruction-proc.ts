@@ -535,7 +535,7 @@ export function RRA(cpu: Cpu) {
   cpu.set_flag(F.Z, false);
   cpu.set_flag(F.N, false);
   cpu.set_flag(F.H, false);
-  cpu.set_flag(F.C, Boolean(carry));
+  cpu.set_flag(F.C, carry);
 }
 
 // (RRC r8): Rotate register r8 right.
@@ -549,10 +549,23 @@ export function RRC_r8(cpu: Cpu, r8: R8) {
   cpu.set_flag(F.Z, result === 0);
   cpu.set_flag(F.N, false);
   cpu.set_flag(F.H, false);
-  cpu.set_flag(F.C, Boolean(carry));
+  cpu.set_flag(F.C, carry);
 }
 
-// (RRC [HL]):      TODO
+// (RRC [HL]): Rotate the byte pointed to by HL right.
+export function RRC_HL(cpu: Cpu) {
+  const HL_val = cpu.get_reg(R16.HL);
+  const n8_val = cpu.bus.read(HL_val);
+  const carry = n8_val & 1;
+
+  const result = (carry << 7) | (n8_val >> 1);
+  cpu.bus.write(HL_val, result);
+
+  cpu.set_flag(F.Z, result === 0);
+  cpu.set_flag(F.N, false);
+  cpu.set_flag(F.H, false);
+  cpu.set_flag(F.C, carry);
+}
 
 // (RRCA): Rotate register A right.
 export function RRCA(cpu: Cpu) {
@@ -565,20 +578,97 @@ export function RRCA(cpu: Cpu) {
   cpu.set_flag(F.Z, false);
   cpu.set_flag(F.N, false);
   cpu.set_flag(F.H, false);
-  cpu.set_flag(F.C, Boolean(carry));
+  cpu.set_flag(F.C, carry);
 }
 
-// (SLA r8):        TODO
+// (SLA r8): Shift Left Arithmetically register r8.
+export function SLA(cpu: Cpu, r8: R8) {
+  const r8_val = cpu.get_reg(r8);
+  const carry = (r8_val >> 7) & 1;
 
-// (SLA [HL]):      TODO
+  const result = (r8_val << 1) & 0xff;
+  cpu.set_reg(r8, result);
 
-// (SRA r8):        TODO
+  cpu.set_flag(F.Z, result === 0);
+  cpu.set_flag(F.N, false);
+  cpu.set_flag(F.H, false);
+  cpu.set_flag(F.C, carry);
+}
 
-// (SRA [HL]):      TODO
+// (SLA [HL]): Shift Left Arithmetically the byte pointed to by HL.
+export function SLA_HL(cpu: Cpu) {
+  const HL_val = cpu.get_reg(R16.HL);
+  const n8_val = cpu.bus.read(HL_val);
+  const carry = (n8_val >> 7) & 1;
 
-// (SRL r8):        TODO
+  const result = (n8_val << 1) & 0xff;
+  cpu.bus.write(HL_val, result);
 
-// (SRL [HL]):      TODO
+  cpu.set_flag(F.Z, result === 0);
+  cpu.set_flag(F.N, false);
+  cpu.set_flag(F.H, false);
+  cpu.set_flag(F.C, carry);
+}
+
+// (SRA r8): Shift Right Arithmetically register r8 (bit 7 of r8 is unchanged).
+export function SRA(cpu: Cpu, r8: R8) {
+  const r8_val = cpu.get_reg(r8);
+  const lsb = r8_val & 0x01;
+  const msb = r8_val & 0x80;
+
+  const result = (r8_val >> 1) | msb;
+  cpu.set_reg(r8, result);
+
+  cpu.set_flag(F.Z, result === 0);
+  cpu.set_flag(F.N, false);
+  cpu.set_flag(F.H, false);
+  cpu.set_flag(F.C, lsb);
+}
+
+// (SRA [HL]): Shift Right Arithmetically the byte pointed to by HL (bit 7 of the byte pointed to by HL is unchanged).
+export function SRA_HL(cpu: Cpu) {
+  const HL_val = cpu.get_reg(R16.HL);
+  const n8_val = cpu.bus.read(HL_val);
+  const lsb = n8_val & 0x01;
+  const msb = n8_val & 0x80;
+
+  const result = (n8_val >> 1) | msb;
+  cpu.bus.write(HL_val, result);
+
+  cpu.set_flag(F.Z, result === 0);
+  cpu.set_flag(F.N, false);
+  cpu.set_flag(F.H, false);
+  cpu.set_flag(F.C, lsb);
+}
+
+// (SRL r8): Shift Right Logically register r8.
+export function SRL(cpu: Cpu, r8: R8) {
+  const r8_val = cpu.get_reg(r8);
+  const carry = r8_val & 1;
+
+  const result = r8_val >> 1;
+  cpu.set_reg(r8, result);
+
+  cpu.set_flag(F.Z, result === 0);
+  cpu.set_flag(F.N, false);
+  cpu.set_flag(F.H, false);
+  cpu.set_flag(F.C, carry);
+}
+
+// (SRL [HL]): Shift Right Logically the byte pointed to by HL.
+export function SRL_HL(cpu: Cpu) {
+  const HL_val = cpu.get_reg(R16.HL);
+  const n8_val = cpu.bus.read(HL_val);
+  const carry = n8_val & 1;
+
+  const result = n8_val >> 1;
+  cpu.bus.write(HL_val, result);
+
+  cpu.set_flag(F.Z, result === 0);
+  cpu.set_flag(F.N, false);
+  cpu.set_flag(F.H, false);
+  cpu.set_flag(F.C, carry);
+}
 
 // (SWAP r8): Swap the upper 4 bits in register r8 and the lower 4 ones.
 export function SWAP(cpu: Cpu, r8: R8) {

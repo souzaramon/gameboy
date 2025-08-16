@@ -62,7 +62,7 @@ export class Cpu {
     return (this.F & (1 << position)) !== 0;
   };
 
-  set_flag = (position: F, val: boolean) => {
+  set_flag = (position: F, val: boolean | number) => {
     if (val) {
       this.F |= 1 << position;
     } else {
